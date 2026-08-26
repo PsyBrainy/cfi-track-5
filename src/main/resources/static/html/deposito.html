@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <title>Deposito</title>    
+    <link rel='stylesheet' href=''>
+    <script defer></script>
+    <link rel="icon" href="">
+</head>
+<header>
+    <!-- aca va la imagen del logo -->
+    <img src="" alt="">
+
+    <!-- armo el menu aca  -->    
+<nav class="menu">
+<ul>
+<li><a href="">Panel de control</a></li>
+<li><a href="">Tranferencia</a></li>
+<li><a href="">Deposito</a></li>
+<li><a href="">Perfil</a></li>
+
+</ul>
+</nav>
+</header>
+
+<body>
+  <div class="deposito-box">
+  <!-- Selector de moneda -->
+  <div class="selector-moneda">
+    <button type="button" id="btn-moneda">
+      Elegir moneda ▾
+    </button>
+  </div>
+
+  <!-- QR -->
+  <div class="qr-container">
+    <img src="" alt="Código QR para depósito" id="qr-deposito">
+  </div>
+
+  <form id="form-deposito">
+    <!-- Input 1: CVU -->
+    <div class="campo campo-copiable">
+      <label for="cvu">CVU</label>
+      <input type="text" id="cvu" name="cvu" value="0000003100012345678901" readonly>
+      <button type="button" id="btn-copiar-cvu" class="btn-copiar">Copiar</button>
+    </div>
+
+    <!-- Input 2: Alias -->
+    <div class="campo campo-copiable">
+      <label for="alias">Alias</label>
+      <input type="text" id="alias" name="alias" value="mi.alias.wallet" readonly>
+      <button type="button" id="btn-copiar-alias" class="btn-copiar">Copiar</button>
+    </div>
+
+    <!-- Botón principal -->
+    <div class="botones-accion">
+      <button type="submit" id="btn-depositar">Depositar</button>
+    </div>
+  </form>
+</div>
+</body>
+
+<footer>
+    <button id="btn-salir1">Salir de ALKYWALLET</button>
+<img src="" alt="">
+<p>&copy; 2026 ALKYWALLET. Todos los derechos reservados</p>
+</footer>
+
+</html>
