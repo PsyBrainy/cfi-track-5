@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alkywall - Movimientos</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="movements.js" defer></script>
+</head>
+<body>
+
+  <header class="main-header">
+    <div class="logo">
+      <h1>Alkywall</h1>
+    </div>
+    <nav class="nav-menu">
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="movements.html">Movimientos</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="main-content">
+    <section class="welcome-card">
+      <h2>Historial de Movimientos</h2>
+      <p style="margin-bottom: 1.5rem; color: var(--text-muted);">Consulta tus ingresos y egresos recientes.</p>
+
+      <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+        <thead>
+          <tr style="background-color: var(--primary-color); color: white; text-align: left;">
+            <th style="padding: 0.75rem;">Fecha</th>
+            <th style="padding: 0.75rem;">Descripción</th>
+            <th style="padding: 0.75rem;">Tipo</th>
+            <th style="padding: 0.75rem;">Monto</th>
+          </tr>
+        </thead>
+        <tbody id="movements-list">
+          <!-- Carga dinámica por JS -->
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer class="main-footer">
+    <p>&copy; 2026 Alkywall. Todos los derechos reservados.</p>
+  </footer>
+
+</body>
+</html>
