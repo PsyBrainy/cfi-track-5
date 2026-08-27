@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alkywall - Transferir Dinero</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="transferia.module.css">
+  <script src="transfer.js" defer></script>
+</head>
+<body>
+
+  <header class="main-header">
+    <div class="logo">
+      <h1>Alkywall</h1>
+    </div>
+    <nav class="nav-menu">
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="movements.html">Movimientos</a></li>
+        <li><a href="transfer.html">Transferir</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="main-content">
+    <section class="welcome-card">
+      <h2>Enviar Dinero</h2>
+      <p style="margin-bottom: 1.5rem; color: var(--text-muted);">Realizá transferencias de forma rápida y segura.</p>
+
+      <form id="transfer-form" class="transfer-form">
+        <div id="alert-message" class="alert-box" style="display: none;"></div>
+
+        <div class="form-group">
+          <label for="recipient">Destinatario (ID o Email):</label>
+          <input type="text" id="recipient" name="recipient" placeholder="Ej: usuario@email.com o ID" required>
+        </div>
+
+        <div class="form-group">
+          <label for="amount">Monto a transferir:</label>
+          <input type="number" id="amount" name="amount" step="0.01" min="1" placeholder="0.00" required>
+        </div>
+
+        <button type="submit" class="btn-primary">Enviar Dinero</button>
+      </form>
+    </section>
+  </main>
+
+  <footer class="main-footer">
+    <p>&copy; 2026 Alkywall. Todos los derechos reservados.</p>
+  </footer>
+
+</body>
+</html>
