@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <title>Tranferencia</title>    
+    <link rel='stylesheet' href=''>
+    <script defer></script>
+    <link rel="icon" href="">
+</head>
+<header>
+    <!-- aca va la imagen del logo -->
+    <img src="" alt="">
+
+    <!-- armo el menu aca  -->    
+<nav class="menu">
+<ul>
+<li><a href="">Panel de control</a></li>
+<li><a href="">Tranferencia</a></li>
+<li><a href="">Deposito</a></li>
+<li><a href="">Perfil</a></li>
+
+</ul>
+</nav>
+</header>
+
+<body>
+   <div class="transferencia-box">
+  <h2>Transferir</h2>
+
+  <form>
+    <!-- Input 1: cuenta origen -->
+    <div class="campo">
+      <label for="cuenta-origen">Desde</label>
+      <input type="text" id="cuenta-origen" name="cuenta-origen" placeholder="Cuenta de origen">
+    </div>
+
+    <!-- Input 2: cuenta destino -->
+    <div class="campo">
+      <label for="cuenta-destino">Hacia</label>
+      <input type="text" id="cuenta-destino" name="cuenta-destino" placeholder="Cuenta de destino">
+    </div>
+
+    <!-- Input monto -->
+    <div class="campo">
+      <label for="monto">Monto</label>
+      <input type="number" id="monto" name="monto" placeholder="0.00" step="any">
+    </div>
+
+    <!-- Botones Total / Minimo -->
+    <div class="botones-monto">
+      <button type="button" id="btn-all">Total</button>
+      <button type="button" id="btn-min">Min</button>
+    </div>
+
+    <!-- Botones de acción -->
+        <div class="botones-accion">
+      <button type="submit" id="btn-enviar">Enviar</button>
+      <button type="button" id="btn-cancelar">Cancelar</button>
+     </div>
+     </form>
+</div>
+</body>
+
+<footer>
+    <button id="btn-salir1">Salir de ALKYWALLET</button>
+<img src="" alt="">
+<p>&copy; 2026 ALKYWALLET. Todos los derechos reservados</p>
+</footer>
+
+</html>
