@@ -16,6 +16,9 @@ import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * Servicio utilitario responsable de la generacion, firma, parseo y validacion de tokens JWT.
+ */
 @Service
 public class JwtService {
 
@@ -25,7 +28,9 @@ public class JwtService {
     @Value("${jwt.expiration}")
     private long jwtExpiration;
 
-    //Genera el token con los roles del usuario
+    /**
+     * Genera un token JWT incluyendo los roles/permisos del usuario.
+     */
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = Map.of(
                 "authorities", userDetails.getAuthorities().stream()
@@ -35,7 +40,9 @@ public class JwtService {
         return generateToken(claims, userDetails.getUsername());
     }
 
-    //Construye y firma el token
+    /**
+     * Construye y firma el token con claims adicionales, subject y tiempo de expiracion.
+     */
     public String generateToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
                 .claims(claims)
@@ -46,13 +53,17 @@ public class JwtService {
                 .compact();
     }
 
-    //Obtiene la SecretKey para firmar el token
+    /**
+     * Obtiene la clave criptografica segura HMAC-SHA a partir del secreto en Base64.
+     */
     private SecretKey getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    //Parsea el token
+    /**
+     * Parsea el payload del token y maneja posibles excepciones de firma o expiracion.
+     */
     private Claims getAllClaims(String token) {
         try {
             return Jwts.parser()
@@ -88,7 +99,9 @@ public class JwtService {
         return getExpiration(token).before(new Date());
     }
 
-    //Valida el token con el usuario y expiracion
+    /**
+     * Valida que el token corresponda al usuario y no se encuentre expirado.
+     */
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = getUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
