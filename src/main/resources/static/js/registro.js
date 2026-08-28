@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       if (isValid) {
-        // 1. Mostrar mensaje de éxito en la tarjeta
+        //1. Crea objeto con los datos capturados
         const usuarioData = {
           nombre: nombreInput.value.trim(),
           email: emailInput.value.trim(),
@@ -72,16 +72,59 @@ document.addEventListener('DOMContentLoaded', () => {
 
         console.log('Datos para enviar al backend', usuarioData);
 
-        if (mensajeExito) {
-          mensajeExito.textContent = '¡Registro exitoso! Redirigiendo al login...';
-          mensajeExito.classList.remove('hidden');
-          mensajeExito.style.display = 'block';
+        const submitButton = registerForm.querySelector('button[type="submit"]');
+        if (submitButton) {
+          submitButton.disabled = true;
         }
 
-        // 2. Redirigir a los 2 segundos a la pantalla de login
-        setTimeout(() => {
-          window.location.href = 'ingresar.html';
-        }, 2000);
+        const config = {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        };
+
+        axios.post('/api/usuarios/registrar', usuarioData, config)
+            .then((response) => {
+              console.log('Respuesta del servidor:', response.data);
+
+              registerForm.reset();
+
+              // Mostrar mensaje de éxito en la tarjeta
+              if (mensajeExito) {
+                mensajeExito.textContent = '¡Registro exitoso! Redirigiendo al login...';
+                mensajeExito.classList.remove('hidden');
+                mensajeExito.style.display = 'block';
+              }
+
+              // Redirigir a los 2 segundos a la pantalla de login
+              setTimeout(() => {
+                window.location.href = 'ingresar.html';
+              }, 2000);
+            })
+            .catch((error) => {
+              console.error('Error de la peticion:', error);
+
+              // Error (HTTP 400 Bad Request o error del servidor)
+              if (error.response) {
+                const mensajeError =
+                    error.response.data?.message ||
+                    error.response.data?.error ||
+                    'El correo ya esta registrado.';
+                showError(errorEmail, mensajeError);
+              } else {
+                // Error de conexion con backend
+                showError(errorEmail, 'No se pudo conectar con el servidor.')
+              }
+            })
+            .finally(() => {
+              if (submitButton) {
+                submitButton.disabled = false;
+              }
+            })
+
+
+
+
       }
     });
   }
