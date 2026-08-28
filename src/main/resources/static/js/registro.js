@@ -64,16 +64,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (isValid) {
         // 1. Mostrar mensaje de éxito en la tarjeta
+        const usuarioData = {
+          nombre: nombreInput.value.trim(),
+          email: emailInput.value.trim(),
+          contrasena: contrasenaInput.value
+        };
+
+        console.log('Datos para enviar al backend', usuarioData);
+
         if (mensajeExito) {
           mensajeExito.textContent = '¡Registro exitoso! Redirigiendo al login...';
           mensajeExito.classList.remove('hidden');
           mensajeExito.style.display = 'block';
         }
 
-        // 2. Redirigir a los 1.5 segundos a la pantalla de login
+        // 2. Redirigir a los 2 segundos a la pantalla de login
         setTimeout(() => {
           window.location.href = 'ingresar.html';
-        }, 1500);
+        }, 2000);
       }
     });
   }
