@@ -57,7 +57,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // 4. Validar confirmacion de contrasena
-      if (confirmContrasenaInput && confirmContrasenaInput.value !== contrasenaInput.value) {
+      if (!confirmContrasenaInput.value) {
+        showError(errorConfirmContrasena, 'Debes confirmar la contraseña.');
+        isValid = false;
+      } else if (confirmContrasenaInput && confirmContrasenaInput.value !== contrasenaInput.value) {
         showError(errorConfirmContrasena, 'Las contrasenas no coinciden.');
         isValid = false;
       }
@@ -70,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
           contrasena: contrasenaInput.value
         };
 
-        console.log('Datos para enviar al backend', usuarioData);
+        console.log('Enviando solicitud de registro para:', usuarioData.email);
 
         const submitButton = registerForm.querySelector('button[type="submit"]');
         if (submitButton) {
