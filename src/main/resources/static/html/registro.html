@@ -4,12 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AlkyWallet - Registro</title>
-  
     
     <!-- CDN de Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Configuración de colores para Tailwind -->
+    <!-- Configuración de Colores Personalizados para Tailwind -->
     <script>
       tailwind.config = {
         theme: {
@@ -26,12 +25,11 @@
       }
     </script>
 
-    <!-- Enlace a tu hoja de estilos personalizada -->
+    <!-- Hoja de estilos personalizados y JavaScript -->
     <link rel="stylesheet" href="../css/custom.css">
-    <script defer></script>
-    
+    <script defer src="../js/registro.js"></script>
 </head>
-<body class="min-h-screen flex flex-col justify-between relative overflow-x-hidden font-sans">
+<body class="bg-bgMain text-textLight min-h-screen flex flex-col justify-between relative overflow-x-hidden font-sans">
 
     <!-- LUCES DE FONDO DE NEÓN -->
     <div class="absolute -top-10 -left-10 w-96 h-96 bg-fuchsiaNeon rounded-full opacity-25 filter blur-3xl pointer-events-none"></div>
@@ -66,30 +64,37 @@
                 
                 <h2 class="text-xl font-bold text-center mb-6 tracking-wide text-white uppercase">REGISTRARSE</h2>
 
-                <form action="" id="registro" class="space-y-4">
+                <form id="registro" class="space-y-4" novalidate>
                     <div>
                         <label for="Remail" class="block text-sm text-gray-400 mb-1 font-medium">Email</label>
-                        <input type="email" id="Remail" required autocomplete="email" placeholder="Alkywallet@gmail.com"
+                        <input type="email" id="Remail" autocomplete="email" placeholder="Alkywallet@gmail.com"
                                class="w-full bg-[#0D0B14] text-white border border-gray-700 rounded-lg px-4 py-2.5 outline-none focus:border-turquoiseNeon focus:ring-1 focus:ring-turquoiseNeon transition duration-200">
+                        <p id="errorEmail" class="text-red-500 text-xs mt-1 hidden"></p>
                     </div>
 
                     <div>
-                        <label class="block text-sm text-gray-400 mb-1 font-medium">Nombre de usuario</label>
-                        <input type="text" required placeholder="123usuario"
+                        <label for="Rnombre" class="block text-sm text-gray-400 mb-1 font-medium">Nombre de usuario</label>
+                        <input type="text" id="Rnombre" autocomplete="username" placeholder="Alkywallet"
                                class="w-full bg-[#0D0B14] text-white border border-gray-700 rounded-lg px-4 py-2.5 outline-none focus:border-turquoiseNeon focus:ring-1 focus:ring-turquoiseNeon transition duration-200">
+                        <p id="errorNombre" class="text-red-500 text-xs mt-1 hidden"></p>
                     </div>
 
                     <div>
                         <label for="Rcontrasena" class="block text-sm text-gray-400 mb-1 font-medium">Contraseña</label>
-                        <input type="password" id="Rcontrasena" required minlength="8" autocomplete="new-password" placeholder="••••••••"
+                        <input type="password" id="Rcontrasena" autocomplete="new-password" placeholder="••••••••"
                                class="w-full bg-[#0D0B14] text-white border border-gray-700 rounded-lg px-4 py-2.5 outline-none focus:border-turquoiseNeon focus:ring-1 focus:ring-turquoiseNeon transition duration-200">
+                        <p id="errorContrasena" class="text-red-500 text-xs mt-1 hidden"></p>
                     </div>
 
                     <div>
                         <label for="r-contrasena" class="block text-sm text-gray-400 mb-1 font-medium">Confirmar Contraseña</label>
-                        <input type="password" id="r-contrasena" required minlength="8" autocomplete="new-password" placeholder="••••••••"
+                        <input type="password" id="r-contrasena" autocomplete="new-password" placeholder="••••••••"
                                class="w-full bg-[#0D0B14] text-white border border-gray-700 rounded-lg px-4 py-2.5 outline-none focus:border-turquoiseNeon focus:ring-1 focus:ring-turquoiseNeon transition duration-200">
+                        <p id="errorConfirmarContrasena" class="text-red-500 text-xs mt-1 hidden"></p>
                     </div>
+
+                    <!-- Mensaje de éxito -->
+                    <p id="mensajeExito" class="text-emerald-400 text-sm text-center font-semibold hidden"></p>
 
                     <div class="pt-4">
                         <button id="btn-registrar-1" type="submit" 
@@ -109,14 +114,4 @@
     </footer>
 
 </body>
-</html>
-
-<body>
-    
-</body>
-
-<footer>
-<img src="" alt="">
-<p>&copy; 2026 ALKYWALLET. Todos los derechos reservados</p>
-</footer>
 </html>
