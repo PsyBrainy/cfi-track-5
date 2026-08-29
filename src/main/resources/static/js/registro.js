@@ -19,14 +19,20 @@ document.addEventListener('DOMContentLoaded', () => {
       const errorConfirmContrasena = document.getElementById('errorConfirmarContrasena');
 
       const mensajeExito = document.getElementById('mensajeExito');
+      const mensajeError = document.getElementById('mensajeError');
 
       // Limpiar errores previos
-      [errorNombre, errorEmail, errorContrasena, errorConfirmContrasena, mensajeExito].forEach(el => {
-        if (el) {
-          el.classList.add('hidden');
-          el.style.display = 'none';
-        }
-
+      [errorNombre,
+        errorEmail,
+        errorContrasena,
+        errorConfirmContrasena,
+        mensajeExito,
+        mensajeError
+      ].forEach(el => {
+          if (el) {
+            el.classList.add('hidden');
+            el.style.display = 'none';
+          }
       });
 
       let isValid = true;
@@ -107,16 +113,26 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch((error) => {
               console.error('Error de la peticion:', error);
 
-              // Error (HTTP 400 Bad Request o error del servidor)
-              if (error.response) {
-                const mensajeError =
-                    error.response.data?.message ||
-                    error.response.data?.error ||
-                    'El correo ya esta registrado.';
-                showError(errorEmail, mensajeError);
+              if (!error.response) {
+                showError(mensajeError, 'No se pudo conectar con el servidor. Verifica tu conexión')
+                return;
+              }
+
+              const status = error.response.status;
+              const data = error.response.data;
+              const mensajeServidor = data?.message || data?.error;
+
+              // Manejo de errores segun el codigo de estado
+              if (status === 409) {
+                showError(errorEmail, mensajeServidor || 'El correo ya esta registrado.');
+              } else if (status === 400) {
+                showError(mensajeError, mensajeServidor || 'Datos de registro inválidos.');
+              } else if (status === 404) {
+                showError(mensajeError, 'El servicio de registro no está disponible.');
+              } else if (status >= 500) {
+                showError(mensajeError, 'Error interno del servidor. Intenta de nuevo más tarde.');
               } else {
-                // Error de conexion con backend
-                showError(errorEmail, 'No se pudo conectar con el servidor.')
+                showError(mensajeError, mensajeServidor || 'Ocurrió un error al procesar el registro.')
               }
             })
             .finally(() => {
