@@ -26,7 +26,7 @@ public class SecurityConfig {
      * Define la cadena de filtros de seguridad HTTP y las reglas de autorizacion.
      */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 // Manejo de sesion sin estado (Stateless con JWT)
