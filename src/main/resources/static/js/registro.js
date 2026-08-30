@@ -19,14 +19,20 @@ document.addEventListener('DOMContentLoaded', () => {
       const errorConfirmContrasena = document.getElementById('errorConfirmarContrasena');
 
       const mensajeExito = document.getElementById('mensajeExito');
+      const mensajeError = document.getElementById('mensajeError');
 
       // Limpiar errores previos
-      [errorNombre, errorEmail, errorContrasena, errorConfirmContrasena, mensajeExito].forEach(el => {
-        if (el) {
-          el.classList.add('hidden');
-          el.style.display = 'none';
-        }
-
+      [errorNombre,
+        errorEmail,
+        errorContrasena,
+        errorConfirmContrasena,
+        mensajeExito,
+        mensajeError
+      ].forEach(el => {
+          if (el) {
+            el.classList.add('hidden');
+            el.style.display = 'none';
+          }
       });
 
       let isValid = true;
@@ -57,23 +63,83 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // 4. Validar confirmacion de contrasena
-      if (confirmContrasenaInput && confirmContrasenaInput.value !== contrasenaInput.value) {
+      if (!confirmContrasenaInput.value) {
+        showError(errorConfirmContrasena, 'Debes confirmar la contraseña.');
+        isValid = false;
+      } else if (confirmContrasenaInput && confirmContrasenaInput.value !== contrasenaInput.value) {
         showError(errorConfirmContrasena, 'Las contrasenas no coinciden.');
         isValid = false;
       }
 
       if (isValid) {
-        // 1. Mostrar mensaje de éxito en la tarjeta
-        if (mensajeExito) {
-          mensajeExito.textContent = '¡Registro exitoso! Redirigiendo al login...';
-          mensajeExito.classList.remove('hidden');
-          mensajeExito.style.display = 'block';
+        //1. Crea objeto con los datos capturados
+        const usuarioData = {
+          nombre: nombreInput.value.trim(),
+          email: emailInput.value.trim(),
+          contrasena: contrasenaInput.value
+        };
+
+        console.log('Enviando solicitud de registro para:', usuarioData.email);
+
+        const submitButton = registerForm.querySelector('button[type="submit"]');
+        if (submitButton) {
+          submitButton.disabled = true;
         }
 
-        // 2. Redirigir a los 1.5 segundos a la pantalla de login
-        setTimeout(() => {
-          window.location.href = 'ingresar.html';
-        }, 1500);
+        const config = {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        };
+
+        axios.post('/api/usuarios/registrar', usuarioData, config)
+            .then((response) => {
+              console.log('Respuesta del servidor:', response.data);
+
+              registerForm.reset();
+
+              // Mostrar mensaje de éxito en la tarjeta
+              if (mensajeExito) {
+                mensajeExito.textContent = '¡Registro exitoso! Redirigiendo al login...';
+                mensajeExito.classList.remove('hidden');
+                mensajeExito.style.display = 'block';
+              }
+
+              // Redirigir a los 2 segundos a la pantalla de login
+              setTimeout(() => {
+                window.location.href = 'ingresar.html';
+              }, 2000);
+            })
+            .catch((error) => {
+              console.error('Error de la peticion:', error);
+
+              if (!error.response) {
+                showError(mensajeError, 'No se pudo conectar con el servidor. Verifica tu conexión')
+                return;
+              }
+
+              const status = error.response.status;
+              const data = error.response.data;
+              const mensajeServidor = data?.message || data?.error;
+
+              // Manejo de errores segun el codigo de estado
+              if (status === 409) {
+                showError(errorEmail, mensajeServidor || 'El correo ya esta registrado.');
+              } else if (status === 400) {
+                showError(mensajeError, mensajeServidor || 'Datos de registro inválidos.');
+              } else if (status === 404) {
+                showError(mensajeError, 'El servicio de registro no está disponible.');
+              } else if (status >= 500) {
+                showError(mensajeError, 'Error interno del servidor. Intenta de nuevo más tarde.');
+              } else {
+                showError(mensajeError, mensajeServidor || 'Ocurrió un error al procesar el registro.')
+              }
+            })
+            .finally(() => {
+              if (submitButton) {
+                submitButton.disabled = false;
+              }
+            })
       }
     });
   }
