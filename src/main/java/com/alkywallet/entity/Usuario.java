@@ -23,10 +23,10 @@ public class Usuario {
     @Column(nullable = false)
     private String nombre;
 
-    @Column(nullable = false)
+    @Column()
     private String apellido;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String dni;
 
     @Column(nullable = false, unique = true)
