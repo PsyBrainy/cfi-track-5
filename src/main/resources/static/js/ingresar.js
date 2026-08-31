@@ -94,18 +94,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
 
                         const status = error.response.status;
-                        const data = error.response.data;
-                        const mensajeServidor = data?.message || data?.error;
 
                         // 6. Mensaje claro según código de respuesta
                         if (status === 401 || status === 403) {
-                            showError(mensajeError, mensajeServidor || 'Credenciales inválidas. Verifica tu email y contraseña.');
+                            showError(mensajeError, 'Credenciales inválidas. Verifica tu email y contraseña.');
                         } else if (status === 404) {
                             showError(mensajeError, 'Usuario no encontrado o servicio no disponible.');
                         } else if (status >= 500) {
                             showError(mensajeError, 'Error interno del servidor. Intenta de nuevo más tarde.');
                         } else {
-                            showError(mensajeError, mensajeServidor || 'Ocurrió un error al iniciar sesión.');
+                            showError(mensajeError, 'Ocurrió un error al iniciar sesión.');
                         }
                     })
                     .finally(() => {

@@ -119,20 +119,18 @@ document.addEventListener('DOMContentLoaded', () => {
               }
 
               const status = error.response.status;
-              const data = error.response.data;
-              const mensajeServidor = data?.message || data?.error;
 
               // Manejo de errores según el código de estado
               if (status === 409) {
-                showError(errorEmail, mensajeServidor || 'El correo ya está registrado.');
+                showError(errorEmail, 'El correo ya está registrado.');
               } else if (status === 400) {
-                showError(mensajeError, mensajeServidor || 'Datos de registro inválidos.');
+                showError(mensajeError, 'Datos de registro inválidos.');
               } else if (status === 404) {
                 showError(mensajeError, 'El servicio de registro no está disponible.');
               } else if (status >= 500) {
                 showError(mensajeError, 'Error interno del servidor. Intenta de nuevo más tarde.');
               } else {
-                showError(mensajeError, mensajeServidor || 'Ocurrió un error al procesar el registro.');
+                showError(mensajeError, 'Ocurrió un error al procesar el registro.');
               }
             })
             .finally(() => {
