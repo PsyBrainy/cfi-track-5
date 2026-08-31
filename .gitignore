@@ -60,4 +60,3 @@ Thumbs.db
 *.pem
 *.key
 credentials.json
-graphify-out/

@@ -1,162 +1,70 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang='en'>
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AlkyWallet - Depósito</title>
-    
-    <!-- CDN de Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Configuración de Colores Personalizados para Tailwind -->
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              bgMain: '#0D0B14',
-              cardDark: '#161221',
-              fuchsiaNeon: '#E025CE',
-              turquoiseNeon: '#00F2FE',
-              textLight: '#F4F4F6',
-            }
-          }
-        }
-      }
-    </script>
-
-    <!-- Enlace a tu hoja de estilos personalizada -->
-    <link rel="stylesheet" href="../css/custom.css">
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <title>Deposito</title>    
+    <link rel='stylesheet' href=''>
     <script defer></script>
-    
+    <link rel="icon" href="">
 </head>
-<body class="bg-bgMain text-textLight min-h-screen flex flex-col md:flex-row relative overflow-x-hidden font-sans">
+<header>
+    <!-- aca va la imagen del logo -->
+    <img src="" alt="">
 
-    <!-- LUCES DE FONDO DE NEÓN -->
-    <div class="absolute -top-10 -left-10 w-96 h-96 bg-fuchsiaNeon rounded-full opacity-20 filter blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-10 -right-10 w-96 h-96 bg-turquoiseNeon rounded-full opacity-20 filter blur-3xl pointer-events-none"></div>
+    <!-- armo el menu aca  -->    
+<nav class="menu">
+<ul>
+<li><a href="">Panel de control</a></li>
+<li><a href="">Tranferencia</a></li>
+<li><a href="">Deposito</a></li>
+<li><a href="">Perfil</a></li>
 
-    <!-- SIDEBAR / MENÚ LATERAL -->
-    <aside class="w-full md:w-64 bg-cardDark/80 backdrop-blur-md border-r border-gray-800 p-6 flex flex-col justify-between z-20">
-        <div>
-            <!-- Branding / Logo -->
-            <div class="flex items-center space-x-3 mb-10">
-                <div class="w-10 h-10 bg-cardDark border border-fuchsiaNeon rounded-xl flex items-center justify-center glow-fuchsia-sm">
-                    <svg class="w-6 h-6" fill="none" stroke-width="2.5" viewBox="0 0 24 24">
-                        <path stroke="#00F2FE" stroke-linecap="round" stroke-linejoin="round" d="M7 20V4m0 0L3 8m4-4l4 4" />
-                        <path stroke="#E025CE" stroke-linecap="round" stroke-linejoin="round" d="M17 4v16m0 0l4-4m-4 4l-4-4" />
-                    </svg>
-                </div>
-                <div>
-                    <h1 class="text-xl font-extrabold tracking-wider">
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-fuchsiaNeon to-turquoiseNeon">ALKY</span>WALLET
-                    </h1>
-                </div>
-            </div>
+</ul>
+</nav>
+</header>
 
-            <!-- Navegación -->
-            <nav class="menu space-y-2">
-                <a href="tableroDeControl.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition">
-                    <span>Dashboard</span>
-                </a>
-                <a href="tranferencia.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition">
-                    <span>Transferencias</span>
-                </a>
-                <!-- Ítem Activo (Depósitos) -->
-                <a href="deposito.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gradient-to-r from-fuchsiaNeon to-purple-600 text-white font-semibold shadow-lg glow-button">
-                    <span>Depósitos</span>
-                </a>
-                <a href="perfil.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition">
-                    <span>Perfil</span>
-                </a>
-            </nav>
-        </div>
+<body>
+  <div class="deposito-box">
+  <!-- Selector de moneda -->
+  <div class="selector-moneda">
+    <button type="button" id="btn-moneda">
+      Elegir moneda ▾
+    </button>
+  </div>
 
-        <!-- Botón Salir en la barra lateral -->
-        <div class="pt-6 border-t border-gray-800">
-            <button id="btn-salir1" class="w-full flex items-center space-x-2 text-gray-400 hover:text-red-400 transition text-sm font-medium">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5" />
-                </svg>
-                <span>Salir de ALKYWALLET</span>
-            </button>
-        </div>
-    </aside>
+  <!-- QR -->
+  <div class="qr-container">
+    <img src="" alt="Código QR para depósito" id="qr-deposito">
+  </div>
 
-    <!-- CONTENIDO PRINCIPAL -->
-    <main class="flex-grow flex flex-col justify-between p-6 md:p-12 z-10 min-h-screen">
-        
-        <div>
-            <!-- HEADER SUPERIOR DE USUARIO -->
-            <div class="flex justify-end items-center mb-6">
-                <div class="flex items-center space-x-3 bg-cardDark/60 backdrop-blur-md px-4 py-2 rounded-full border border-gray-800">
-                    <span class="text-sm font-medium text-white">Evano</span>
-                    <img src="https://i.pravatar.cc/100?img=12" alt="Foto de Perfil" class="w-8 h-8 rounded-full border border-turquoiseNeon object-cover">
-                </div>
-            </div>
+  <form id="form-deposito">
+    <!-- Input 1: CVU -->
+    <div class="campo campo-copiable">
+      <label for="cvu">CVU</label>
+      <input type="text" id="cvu" name="cvu" value="0000003100012345678901" readonly>
+      <button type="button" id="btn-copiar-cvu" class="btn-copiar">Copiar</button>
+    </div>
 
-            <!-- CONTENEDOR DE LA TARJETA -->
-            <div class="max-w-lg mx-auto w-full">
-                <!-- TARJETA DE DEPÓSITO -->
-                <div class="deposito-box bg-cardDark rounded-2xl p-6 md:p-10 relative shadow-2xl border border-fuchsiaNeon/30 glow-card-fuchsia">
-                    
-                    <!-- Selector de Moneda -->
-                    <div class="selector-moneda mb-6 flex justify-between items-center bg-[#0D0B14] p-3.5 rounded-xl border border-gray-800">
-                        <div class="flex items-center space-x-2">
-                            <span class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center text-xs border border-emerald-500/40">$</span>
-                            <span class="text-sm font-semibold text-white">ARS</span>
-                        </div>
-                        <button type="button" id="btn-moneda" class="text-xs text-turquoiseNeon hover:underline flex items-center gap-1 font-medium">
-                            Elegir moneda ▾
-                        </button>
-                    </div>
+    <!-- Input 2: Alias -->
+    <div class="campo campo-copiable">
+      <label for="alias">Alias</label>
+      <input type="text" id="alias" name="alias" value="mi.alias.wallet" readonly>
+      <button type="button" id="btn-copiar-alias" class="btn-copiar">Copiar</button>
+    </div>
 
-                    <!-- Contenedor Código QR -->
-                    <div class="qr-container bg-white p-4 rounded-xl w-52 h-52 mx-auto mb-6 flex items-center justify-center shadow-inner">
-                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=0000003100012345678901" alt="Código QR para depósito" id="qr-deposito" class="w-full h-full object-contain">
-                    </div>
-
-                    <!-- Formulario de Datos -->
-                    <form id="form-deposito" class="space-y-5">
-                        <!-- CVU -->
-                        <div class="campo campo-copiable">
-                            <label for="cvu" class="block text-xs text-gray-400 mb-1 font-medium">CVU</label>
-                            <div class="flex items-center justify-between bg-[#0D0B14] border border-gray-800 rounded-xl px-4 py-2.5 focus-within:border-turquoiseNeon w-full">
-                                <input type="text" id="cvu" name="cvu" value="0000003100012345678901" readonly 
-                                       class="bg-transparent flex-1 min-w-0 text-xs md:text-sm font-mono text-white outline-none pr-2">
-                                <button type="button" id="btn-copiar-cvu" class="btn-copiar text-xs text-turquoiseNeon font-semibold hover:text-white transition shrink-0">Copiar</button>
-                            </div>
-                        </div>
-
-                        <!-- Alias -->
-                        <div class="campo campo-copiable">
-                            <label for="alias" class="block text-xs text-gray-400 mb-1 font-medium">Alias</label>
-                            <div class="flex items-center justify-between bg-[#0D0B14] border border-gray-800 rounded-xl px-4 py-2.5 focus-within:border-turquoiseNeon w-full">
-                                <input type="text" id="alias" name="alias" value="Alkemy.Wall.Si" readonly 
-                                       class="bg-transparent flex-1 min-w-0 text-sm font-semibold text-white outline-none pr-2">
-                                <button type="button" id="btn-copiar-alias" class="btn-copiar text-xs text-turquoiseNeon font-semibold hover:text-white transition shrink-0">Copiar</button>
-                            </div>
-                        </div>
-
-                        <!-- Botón Principal -->
-                        <div class="botones-accion pt-4">
-                            <button type="submit" id="btn-depositar" 
-                                    class="w-full bg-gradient-to-r from-fuchsiaNeon to-turquoiseNeon text-white font-bold py-3 rounded-xl shadow-lg hover:opacity-90 transition duration-300 glow-button">
-                                Compartir Datos
-                            </button>
-                        </div>
-                    </form>
-
-                </div>
-            </div>
-        </div>
-
-        <!-- FOOTER -->
-        <footer class="w-full text-center text-xs text-gray-500 mt-8">
-            <p>&copy; 2026 ALKYWALLET. Todos los derechos reservados</p>
-        </footer>
-
-    </main>
-
+    <!-- Botón principal -->
+    <div class="botones-accion">
+      <button type="submit" id="btn-depositar">Depositar</button>
+    </div>
+  </form>
+</div>
 </body>
+
+<footer>
+    <button id="btn-salir1">Salir de ALKYWALLET</button>
+<img src="" alt="">
+<p>&copy; 2026 ALKYWALLET. Todos los derechos reservados</p>
+</footer>
+
 </html>
