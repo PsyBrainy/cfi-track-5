@@ -8,12 +8,12 @@ document.addEventListener('DOMContentLoaded', () => {
       event.preventDefault();
 
       // Captura de inputs y elementos de error
-      const nombreInput = document.getElementById('Rnombre');
+      const dniInput = document.getElementById('Rdni');
       const emailInput = document.getElementById('Remail');
       const passwordInput = document.getElementById('Rpassword');
       const confirmPasswordInput = document.getElementById('r-password');
 
-      const errorNombre = document.getElementById('errorNombre');
+      const errorDni = document.getElementById('errorDni');
       const errorEmail = document.getElementById('errorEmail');
       const errorPassword = document.getElementById('errorPassword');
       const errorConfirmPassword = document.getElementById('errorConfirmarPassword');
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const mensajeError = document.getElementById('mensajeError');
 
       // Limpiar errores previos
-      [errorNombre,
+      [errorDni,
         errorEmail,
         errorPassword,
         errorConfirmPassword,
@@ -37,9 +37,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
       let isValid = true;
 
-      // 3. Validar que el nombre no esté vacío
-      if (!nombreInput.value.trim()) {
-        showError(errorNombre, 'El nombre es obligatorio.');
+      // 3. Validar DNI: no vacío, solo números y entre 7 y 8 dígitos
+      const dniRegex = /^[0-9]{7,8}$/;
+      const dniValor = dniInput.value.trim();
+
+      if (!dniValor) {
+        showError(errorDni, 'El DNI es obligatorio.');
+        isValid = false;
+      } else if (!dniRegex.test(dniValor)) {
+        showError(errorDni, 'Ingresá un DNI válido (entre 7 y 8 números).');
         isValid = false;
       }
 
@@ -75,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (isValid) {
         // Crea objeto con los datos capturados
         const usuarioData = {
-          nombre: nombreInput.value.trim(),
+          dni: dniInput.value.trim(),
           email: emailInput.value.trim(),
           password: passwordInput.value
         };
@@ -119,20 +125,18 @@ document.addEventListener('DOMContentLoaded', () => {
               }
 
               const status = error.response.status;
-              const data = error.response.data;
-              const mensajeServidor = data?.message || data?.error;
 
               // Manejo de errores según el código de estado
               if (status === 409) {
-                showError(errorEmail, mensajeServidor || 'El correo ya está registrado.');
+                showError(mensajeError, 'El DNI o el correo electrónico ya se encuentran registrados.');
               } else if (status === 400) {
-                showError(mensajeError, mensajeServidor || 'Datos de registro inválidos.');
+                showError(mensajeError, 'Datos de registro inválidos.');
               } else if (status === 404) {
                 showError(mensajeError, 'El servicio de registro no está disponible.');
               } else if (status >= 500) {
                 showError(mensajeError, 'Error interno del servidor. Intenta de nuevo más tarde.');
               } else {
-                showError(mensajeError, mensajeServidor || 'Ocurrió un error al procesar el registro.');
+                showError(mensajeError, 'Ocurrió un error al procesar el registro.');
               }
             })
             .finally(() => {
