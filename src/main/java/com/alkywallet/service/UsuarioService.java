@@ -20,9 +20,14 @@ public class UsuarioService {
         if (usuarioRepository.findByEmail(request.email()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "El email ya existe");
         }
+        // Validar si el DNI ya existe
+        if (usuarioRepository.findByDni(request.dni()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "El DNI ya está registrado");
+        }
+
         // Construir la entidad con la contraseña encriptada
         Usuario nuevoUsuario = Usuario.builder()
-                .nombre(request.nombre())
+                .dni(request.dni())
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
                 .isDeleted(false)

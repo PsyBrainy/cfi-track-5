@@ -20,13 +20,13 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column
     private String nombre;
 
-    @Column()
+    @Column
     private String apellido;
 
-    @Column(unique = true)
+    @Column(nullable = false, unique = true)
     private String dni;
 
     @Column(nullable = false, unique = true)
