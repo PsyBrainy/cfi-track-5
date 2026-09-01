@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
                     .then((response) => {
                         // 5. Extraer el token JWT y guardarlo en localStorage
-                        const token = response.data?.token || response.data?.jwt || response.data;
+                        const token = response.data?.token;
 
                         if (token) {
                             localStorage.setItem('token', token);
