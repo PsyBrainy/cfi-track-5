@@ -44,7 +44,7 @@ public class SecurityConfig {
                                 "/images/**"
                         ).permitAll()
                         // Endpoints públicos de autenticación y registro de usuarios
-                        .requestMatchers("/api/auth/**", "/api/usuarios/**", "/error").permitAll()
+                        .requestMatchers("/api/auth/**", "/api/usuarios/registrar", "/error").permitAll()
                         // Documentacion Swagger / OpenAPI
                         .requestMatchers(
                                 "/v3/api-docs/**",
