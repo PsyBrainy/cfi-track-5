@@ -1,6 +1,7 @@
 package com.alkywallet.service;
 
 import com.alkywallet.dto.RegisterRequest;
+import com.alkywallet.entity.Role;
 import com.alkywallet.entity.Usuario;
 import com.alkywallet.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class UsuarioService {
                 .dni(request.dni())
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
+                .rol(Role.CLIENT)
                 .isDeleted(false)
                 .build();
         // Persistir en la base de datos
