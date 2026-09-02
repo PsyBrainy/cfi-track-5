@@ -74,15 +74,6 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserResponseDTO obtenerPorEmail(String email) {
-        Usuario usuario = usuarioRepository.findByEmail(email)
-                .filter(u -> !u.isDeleted())
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
-        return toResponseDTO(usuario);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public List<UserResponseDTO> obtenerTodos() {
         return usuarioRepository.findAll().stream()
                 .filter(u -> !u.isDeleted())

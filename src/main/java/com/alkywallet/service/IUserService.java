@@ -15,8 +15,6 @@ public interface IUserService {
 
     UserResponseDTO obtenerPorId(Long id);
 
-    UserResponseDTO obtenerPorEmail(String email);
-
     List<UserResponseDTO> obtenerTodos();
 
     UserResponseDTO actualizar(Long id, UserUpdateDTO request);
