@@ -27,9 +27,7 @@ class UserServiceTest {
         Long nonExistentId = 999L;
         when(userRepository.findById(nonExistentId)).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> {
-            userService.obtenerPorId(nonExistentId);
-        });
+        assertThrows(RuntimeException.class, () -> userService.obtenerPorId(nonExistentId));
     }
 
     // Edge Case: Eliminar usuario con ID inexistente
@@ -38,8 +36,6 @@ class UserServiceTest {
         Long nonExistentId = 999L;
         when(userRepository.findById(nonExistentId)).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> {
-            userService.eliminar(nonExistentId);
-        });
+        assertThrows(RuntimeException.class, () -> userService.eliminar(nonExistentId));
     }
 }
