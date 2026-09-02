@@ -1,34 +1,54 @@
 package com.alkywallet.service;
 
+import com.alkywallet.dto.RegisterRequest;
 import com.alkywallet.dto.UserRequestDTO;
 import com.alkywallet.dto.UserResponseDTO;
 import com.alkywallet.dto.UserUpdateDTO;
+import com.alkywallet.entity.Cuenta;
+import com.alkywallet.entity.Role;
+import com.alkywallet.entity.TipoMoneda;
 import com.alkywallet.entity.Usuario;
 import com.alkywallet.exception.ResourceNotFoundException;
+import com.alkywallet.repository.CuentaRepository;
 import com.alkywallet.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements IUserService {
-
     private final UsuarioRepository usuarioRepository;
+    private final CuentaRepository cuentaRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
+    @Transactional
+    public void registrarUsuario(RegisterRequest request) {
+        validarUnicidadEmailYDni(request.email(), request.dni(), null);
+
+        Usuario usuario = Usuario.builder()
+                .dni(request.dni())
+                .email(request.email())
+                .password(passwordEncoder.encode(request.password()))
+                .rol(Role.CLIENT)
+                .isDeleted(false)
+                .build();
+
+        Usuario guardado = usuarioRepository.save(usuario);
+        crearCuentaInicial(guardado);
+    }
+
+    @Override
     public UserResponseDTO crear(UserRequestDTO request) {
-        if (usuarioRepository.findByEmail(request.email()).isPresent()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "El email ya está registrado");
-        }
-        if (usuarioRepository.findByDni(request.dni()).isPresent()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "El DNI ya está registrado");
-        }
+        validarUnicidadEmailYDni(request.email(), request.dni(), null);
 
         Usuario usuario = Usuario.builder()
                 .nombre(request.nombre())
@@ -36,19 +56,24 @@ public class UserServiceImpl implements IUserService {
                 .dni(request.dni())
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
+                .rol(Role.CLIENT)
                 .isDeleted(false)
                 .build();
 
         Usuario guardado = usuarioRepository.save(usuario);
+        crearCuentaInicial(guardado);
+
         return toResponseDTO(guardado);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserResponseDTO obtenerPorId(Long id) {
         return toResponseDTO(buscarUsuarioActivo(id));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserResponseDTO> obtenerTodos() {
         return usuarioRepository.findAll().stream()
                 .filter(u -> !u.isDeleted())
@@ -57,6 +82,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    @Transactional
     public UserResponseDTO actualizar(Long id, UserUpdateDTO request) {
         Usuario usuario = buscarUsuarioActivo(id);
 
@@ -67,18 +93,15 @@ public class UserServiceImpl implements IUserService {
             usuario.setApellido(request.apellido());
         }
         if (request.email() != null && !request.email().isBlank()) {
-            usuarioRepository.findByEmail(request.email())
-                    .filter(u -> !u.getId().equals(id))
-                    .ifPresent(u -> {
-                        throw new ResponseStatusException(HttpStatus.CONFLICT, "El email ya está en uso");
-                    });
-            usuario.setEmail(request.email());
+            validarUnicidadEmailYDni(request.email().trim(), null, id);
+            usuario.setEmail(request.email().trim());
         }
 
         return toResponseDTO(usuarioRepository.save(usuario));
     }
 
     @Override
+    @Transactional
     public void eliminar(Long id) {
         Usuario usuario = buscarUsuarioActivo(id);
         usuario.setDeleted(true);
@@ -89,6 +112,33 @@ public class UserServiceImpl implements IUserService {
         return usuarioRepository.findById(id)
                 .filter(u -> !u.isDeleted())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
+    }
+
+    private void validarUnicidadEmailYDni(String email, String dni, Long excludeUserId) {
+        if (email != null) {
+            usuarioRepository.findByEmail(email)
+                    .filter(u -> !Objects.equals(u.getId(), excludeUserId))
+                    .ifPresent(u -> {
+                        throw new ResponseStatusException(HttpStatus.CONFLICT, "El email ya esta registrado");
+                    });
+        }
+        if (dni != null) {
+            usuarioRepository.findByDni(dni)
+                    .filter(u -> !Objects.equals(u.getId(), excludeUserId))
+                    .ifPresent(u -> {
+                        throw new ResponseStatusException(HttpStatus.CONFLICT, "El DNI ya esta registrado");
+                    });
+        }
+    }
+
+    private void crearCuentaInicial(Usuario usuario) {
+        Cuenta cuenta = Cuenta.builder()
+                .usuario(usuario)
+                .saldo(BigDecimal.ZERO)
+                .tipoMoneda(TipoMoneda.ARS)
+                .isDeleted(false)
+                .build();
+        cuentaRepository.save(cuenta);
     }
 
     private UserResponseDTO toResponseDTO(Usuario usuario) {

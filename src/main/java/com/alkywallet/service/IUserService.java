@@ -1,5 +1,6 @@
 package com.alkywallet.service;
 
+import com.alkywallet.dto.RegisterRequest;
 import com.alkywallet.dto.UserRequestDTO;
 import com.alkywallet.dto.UserResponseDTO;
 import com.alkywallet.dto.UserUpdateDTO;
@@ -7,6 +8,8 @@ import com.alkywallet.dto.UserUpdateDTO;
 import java.util.List;
 
 public interface IUserService {
+
+    void registrarUsuario(RegisterRequest request);
 
     UserResponseDTO crear(UserRequestDTO request);
 
