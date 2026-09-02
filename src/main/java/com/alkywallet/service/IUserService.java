@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface IUserService {
 
-    UserResponseDTO registrarUsuario(RegisterRequest request);
+    void registrarUsuario(RegisterRequest request);
 
     UserResponseDTO crear(UserRequestDTO request);
 

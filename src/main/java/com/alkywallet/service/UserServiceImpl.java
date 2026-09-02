@@ -20,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +31,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     @Transactional
-    public UserResponseDTO registrarUsuario(RegisterRequest request) {
+    public void registrarUsuario(RegisterRequest request) {
         validarUnicidadEmailYDni(request.email(), request.dni(), null);
 
         Usuario usuario = Usuario.builder()
@@ -42,9 +43,7 @@ public class UserServiceImpl implements IUserService {
                 .build();
 
         Usuario guardado = usuarioRepository.save(usuario);
-        crearCuentaInicial(guardado, TipoMoneda.ARS);
-
-        return toResponseDTO(guardado);
+        crearCuentaInicial(guardado);
     }
 
     @Override
@@ -62,7 +61,7 @@ public class UserServiceImpl implements IUserService {
                 .build();
 
         Usuario guardado = usuarioRepository.save(usuario);
-        crearCuentaInicial(guardado, TipoMoneda.ARS);
+        crearCuentaInicial(guardado);
 
         return toResponseDTO(guardado);
     }
@@ -127,25 +126,25 @@ public class UserServiceImpl implements IUserService {
     private void validarUnicidadEmailYDni(String email, String dni, Long excludeUserId) {
         if (email != null) {
             usuarioRepository.findByEmail(email)
-                    .filter(u -> excludeUserId == null || !u.getId().equals(excludeUserId))
+                    .filter(u -> !Objects.equals(u.getId(), excludeUserId))
                     .ifPresent(u -> {
                         throw new ResponseStatusException(HttpStatus.CONFLICT, "El email ya esta registrado");
                     });
         }
         if (dni != null) {
             usuarioRepository.findByDni(dni)
-                    .filter(u -> excludeUserId == null || !u.getId().equals(excludeUserId))
+                    .filter(u -> !Objects.equals(u.getId(), excludeUserId))
                     .ifPresent(u -> {
                         throw new ResponseStatusException(HttpStatus.CONFLICT, "El DNI ya esta registrado");
                     });
         }
     }
 
-    private void crearCuentaInicial(Usuario usuario, TipoMoneda moneda) {
+    private void crearCuentaInicial(Usuario usuario) {
         Cuenta cuenta = Cuenta.builder()
                 .usuario(usuario)
                 .saldo(BigDecimal.ZERO)
-                .tipoMoneda(moneda)
+                .tipoMoneda(TipoMoneda.ARS)
                 .isDeleted(false)
                 .build();
         cuentaRepository.save(cuenta);

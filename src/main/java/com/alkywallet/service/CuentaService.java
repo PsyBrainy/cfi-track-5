@@ -26,7 +26,7 @@ public class CuentaService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
 
         Cuenta cuenta = cuentaRepository.findByUsuarioIdAndTipoMoneda(usuario.getId(), TipoMoneda.ARS)
-                .orElseGet(() -> crearCuentaInicial(usuario, TipoMoneda.ARS));
+                .orElseGet(() -> crearCuentaInicial(usuario));
 
         return CuentaDTO.builder()
                 .id(cuenta.getId())
@@ -41,7 +41,7 @@ public class CuentaService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
 
         Cuenta cuenta = cuentaRepository.findByUsuarioIdAndTipoMoneda(usuario.getId(), TipoMoneda.ARS)
-                .orElseGet(() -> crearCuentaInicial(usuario, TipoMoneda.ARS));
+                .orElseGet(() -> crearCuentaInicial(usuario));
 
         return CuentaDTO.builder()
                 .id(cuenta.getId())
@@ -50,11 +50,11 @@ public class CuentaService {
                 .build();
     }
 
-    private Cuenta crearCuentaInicial(Usuario usuario, TipoMoneda tipoMoneda) {
+    private Cuenta crearCuentaInicial(Usuario usuario) {
         Cuenta nuevaCuenta = Cuenta.builder()
                 .usuario(usuario)
                 .saldo(BigDecimal.ZERO)
-                .tipoMoneda(tipoMoneda)
+                .tipoMoneda(TipoMoneda.ARS)
                 .isDeleted(false)
                 .build();
 
