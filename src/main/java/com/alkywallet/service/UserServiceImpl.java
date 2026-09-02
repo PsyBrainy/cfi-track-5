@@ -10,7 +10,7 @@ import com.alkywallet.entity.TipoMoneda;
 import com.alkywallet.entity.Usuario;
 import com.alkywallet.exception.ResourceNotFoundException;
 import com.alkywallet.repository.CuentaRepository;
-import com.alkywallet.repository.UsuarioRepository;
+import com.alkywallet.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,7 +25,7 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements IUserService {
-    private final UsuarioRepository usuarioRepository;
+    private final UserRepository userRepository;
     private final CuentaRepository cuentaRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -42,7 +42,7 @@ public class UserServiceImpl implements IUserService {
                 .isDeleted(false)
                 .build();
 
-        Usuario guardado = usuarioRepository.save(usuario);
+        Usuario guardado = userRepository.save(usuario);
         crearCuentaInicial(guardado);
     }
 
@@ -60,7 +60,7 @@ public class UserServiceImpl implements IUserService {
                 .isDeleted(false)
                 .build();
 
-        Usuario guardado = usuarioRepository.save(usuario);
+        Usuario guardado = userRepository.save(usuario);
         crearCuentaInicial(guardado);
 
         return toResponseDTO(guardado);
@@ -75,7 +75,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     @Transactional(readOnly = true)
     public List<UserResponseDTO> obtenerTodos() {
-        return usuarioRepository.findAll().stream()
+        return userRepository.findAll().stream()
                 .filter(u -> !u.isDeleted())
                 .map(this::toResponseDTO)
                 .toList();
@@ -97,7 +97,7 @@ public class UserServiceImpl implements IUserService {
             usuario.setEmail(request.email().trim());
         }
 
-        return toResponseDTO(usuarioRepository.save(usuario));
+        return toResponseDTO(userRepository.save(usuario));
     }
 
     @Override
@@ -105,25 +105,25 @@ public class UserServiceImpl implements IUserService {
     public void eliminar(Long id) {
         Usuario usuario = buscarUsuarioActivo(id);
         usuario.setDeleted(true);
-        usuarioRepository.save(usuario);
+        userRepository.save(usuario);
     }
 
     private Usuario buscarUsuarioActivo(Long id) {
-        return usuarioRepository.findById(id)
+        return userRepository.findById(id)
                 .filter(u -> !u.isDeleted())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
     }
 
     private void validarUnicidadEmailYDni(String email, String dni, Long excludeUserId) {
         if (email != null) {
-            usuarioRepository.findByEmail(email)
+            userRepository.findByEmail(email)
                     .filter(u -> !Objects.equals(u.getId(), excludeUserId))
                     .ifPresent(u -> {
                         throw new ResponseStatusException(HttpStatus.CONFLICT, "El email ya esta registrado");
                     });
         }
         if (dni != null) {
-            usuarioRepository.findByDni(dni)
+            userRepository.findByDni(dni)
                     .filter(u -> !Objects.equals(u.getId(), excludeUserId))
                     .ifPresent(u -> {
                         throw new ResponseStatusException(HttpStatus.CONFLICT, "El DNI ya esta registrado");

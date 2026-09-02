@@ -1,7 +1,6 @@
 package com.alkywallet.service;
 
 import com.alkywallet.repository.UserRepository;
-import com.alkywallet.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,7 +28,7 @@ class UserServiceTest {
         when(userRepository.findById(nonExistentId)).thenReturn(Optional.empty());
 
         assertThrows(RuntimeException.class, () -> {
-            userService.findById(nonExistentId);
+            userService.obtenerPorId(nonExistentId);
         });
     }
 
@@ -37,10 +36,10 @@ class UserServiceTest {
     @Test
     void deleteById_WhenUserDoesNotExist_ShouldThrowException() {
         Long nonExistentId = 999L;
-        when(userRepository.existsById(nonExistentId)).thenReturn(false);
+        when(userRepository.findById(nonExistentId)).thenReturn(Optional.empty());
 
         assertThrows(RuntimeException.class, () -> {
-            userService.deleteById(nonExistentId);
+            userService.eliminar(nonExistentId);
         });
     }
 }
