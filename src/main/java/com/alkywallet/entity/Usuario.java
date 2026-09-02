@@ -35,10 +35,9 @@ public class Usuario {
     @Column(nullable = false)
     private String password;
 
-    /* Aca iria el rol
-    @Column(nullable = false)
-    private Roles rol;
-     */
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private Role rol;
 
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted;
