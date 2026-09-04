@@ -6,11 +6,10 @@ import com.alkywallet.service.TransaccionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/transacciones")
@@ -31,5 +30,16 @@ public class TransaccionController {
         String email = authentication.getName();
         List<GastoPorTipoDTO> reporte = transaccionService.obtenerReporteGastosPorEmail(email);
         return ResponseEntity.ok(reporte);
+    }
+
+    @PostMapping("/deposito")
+    public ResponseEntity<Map<String, String>> realizarDeposito(
+            @RequestBody Map<String, Double> payload,
+            Authentication authentication
+    ) {
+        String email = authentication.getName();
+        Double monto = payload.get("monto");
+        transaccionService.realizarDepositoPorEmail(email, monto);
+        return ResponseEntity.ok(Map.of("mensaje", "Depósito realizado con éxito"));
     }
 }

@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         movimientos.forEach((mov) => {
             const descripcion = mov.concepto ?? '';
             const fecha = formatearFecha(mov.fecha);
-            const tipo = (mov.tipo ?? '').toUpperCase();
+            const tipo = (mov.tipoTransaccion ?? mov.tipo ?? '').toUpperCase();
             const monto = Number(mov.monto) || 0;
             const esIngreso = tipo === 'INGRESO' || tipo === 'DEPOSITO';
 

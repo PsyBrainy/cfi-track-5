@@ -30,6 +30,25 @@ public class TransaccionService {
     private final UserRepository userRepository;
 
     @Transactional
+    public void realizarDepositoPorEmail(String email, Double monto) {
+        Usuario usuario = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+
+        Cuenta cuenta = cuentaRepository.findByUsuarioIdAndTipoMoneda(usuario.getId(), TipoMoneda.ARS)
+                .orElseGet(() -> {
+                    Cuenta nueva = Cuenta.builder()
+                            .usuario(usuario)
+                            .saldo(BigDecimal.ZERO)
+                            .tipoMoneda(TipoMoneda.ARS)
+                            .isDeleted(false)
+                            .build();
+                    return cuentaRepository.save(nueva);
+                });
+
+        realizarDeposito(cuenta.getId(), monto);
+    }
+
+    @Transactional
     public void realizarDeposito(Long cuentaId, Double monto) {
         if (cuentaId == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El ID de la cuenta es obligatorio");
