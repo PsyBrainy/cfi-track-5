@@ -1,5 +1,6 @@
 package com.alkywallet.service;
 
+import com.alkywallet.dto.GastoPorTipoDTO;
 import com.alkywallet.dto.TransaccionDTO;
 import com.alkywallet.exception.ResourceNotFoundException;
 import com.alkywallet.exception.SaldoInsuficienteException;
@@ -125,5 +126,16 @@ public class TransaccionService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cuenta no encontrada"));
 
         return transaccionRepository.obtenerHistorialPorCuentaId(cuenta.getId());
+    }
+
+    @Transactional(readOnly = true)
+    public List<GastoPorTipoDTO> obtenerReporteGastosPorEmail(String email) {
+        Usuario usuario = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+
+        Cuenta cuenta = cuentaRepository.findByUsuarioIdAndTipoMoneda(usuario.getId(), TipoMoneda.ARS)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cuenta no encontrada"));
+
+        return transaccionRepository.obtenerTotalPorTipoYCuentaId(cuenta.getId());
     }
 }

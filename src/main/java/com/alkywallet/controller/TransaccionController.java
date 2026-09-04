@@ -1,5 +1,6 @@
 package com.alkywallet.controller;
 
+import com.alkywallet.dto.GastoPorTipoDTO;
 import com.alkywallet.dto.TransaccionDTO;
 import com.alkywallet.service.TransaccionService;
 import lombok.RequiredArgsConstructor;
@@ -23,5 +24,12 @@ public class TransaccionController {
         String email = authentication.getName();
         List<TransaccionDTO> historial = transaccionService.obtenerHistorialPorEmail(email);
         return ResponseEntity.ok(historial);
+    }
+
+    @GetMapping("/reporte-gastos")
+    public ResponseEntity<List<GastoPorTipoDTO>> getReporteGastos(Authentication authentication) {
+        String email = authentication.getName();
+        List<GastoPorTipoDTO> reporte = transaccionService.obtenerReporteGastosPorEmail(email);
+        return ResponseEntity.ok(reporte);
     }
 }
