@@ -1,0 +1,43 @@
+/* ==========================================
+   historial.module.css
+   Scope manual: TODAS las clases acá adentro
+   empiezan con "historial-" para no chocar
+   con estilos de otras vistas.
+   ========================================== */
+
+.historial-wrapper {
+  --historial-verde: #34d399;
+  --historial-rojo: #fb7185;
+}
+
+.historial-tbody tr.historial-fila:hover {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.historial-badge {
+  font-size: 0.7rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.historial-badge-ingreso {
+  color: var(--historial-verde);
+  background-color: rgba(16, 185, 129, 0.1);
+}
+
+.historial-badge-egreso {
+  color: var(--historial-rojo);
+  background-color: rgba(244, 63, 94, 0.1);
+}
+
+.historial-monto-ingreso {
+  color: var(--historial-verde);
+  font-weight: 600;
+}
+
+.historial-monto-egreso {
+  color: var(--historial-rojo);
+  font-weight: 600;
+}

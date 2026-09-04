@@ -28,6 +28,7 @@
     <!-- Enlace a tu hoja de estilos personalizada -->
     <link rel="stylesheet" href="../css/custom.css">
     <script defer src="../js/dashboard.js"></script>
+    <script defer src="../js/reporteGastos.js"></script>
     
 </head>
 <body class="bg-bgMain text-textLight min-h-screen flex flex-col md:flex-row relative font-sans m-0 p-0 overflow-x-hidden">
@@ -122,11 +123,28 @@
                 </div>
             </div>
 
+            <!-- REPORTE DE GASTOS -->
+            <div class="bg-cardDark rounded-2xl p-6 border border-gray-800 shadow-xl mb-8">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-white">Distribución de Movimientos</h3>
+                        <p class="text-xs text-gray-400 mt-1">Análisis proporcional de ingresos y gastos por categoría</p>
+                    </div>
+                    <div id="reporte-total-gastos" class="mt-2 sm:mt-0 text-xs font-semibold text-turquoiseNeon bg-turquoiseNeon/10 px-3 py-1.5 rounded-full self-start sm:self-auto">
+                        Cálculo en tiempo real
+                    </div>
+                </div>
+
+                <div id="reporte-gastos-contenedor" class="space-y-4">
+                    <p class="text-xs text-center text-gray-500 py-4">Cargando reporte de gastos...</p>
+                </div>
+            </div>
+
             <!-- TABLA DE ÚLTIMOS MOVIMIENTOS -->
             <div class="bg-cardDark rounded-2xl p-6 border border-gray-800 shadow-xl mb-6">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="text-lg font-bold text-white">Últimos Movimientos</h3>
-                    <a href="#" class="text-xs text-turquoiseNeon hover:underline font-semibold">Ver todos</a>
+                    <a href="historial.html" class="text-xs text-turquoiseNeon hover:underline font-semibold">Ver todos</a>
                 </div>
 
                 <div class="overflow-x-auto">
