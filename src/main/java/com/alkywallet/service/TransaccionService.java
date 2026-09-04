@@ -1,12 +1,16 @@
 package com.alkywallet.service;
 
+import com.alkywallet.dto.TransaccionDTO;
 import com.alkywallet.exception.ResourceNotFoundException;
 import com.alkywallet.exception.SaldoInsuficienteException;
 import com.alkywallet.entity.Cuenta;
+import com.alkywallet.entity.TipoMoneda;
 import com.alkywallet.entity.TipoTransaccion;
 import com.alkywallet.entity.Transaccion;
+import com.alkywallet.entity.Usuario;
 import com.alkywallet.repository.CuentaRepository;
 import com.alkywallet.repository.TransaccionRepository;
+import com.alkywallet.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -15,12 +19,14 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class TransaccionService {
     private final CuentaRepository cuentaRepository;
     private final TransaccionRepository transaccionRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public void realizarDeposito(Long cuentaId, Double monto) {
@@ -54,7 +60,8 @@ public class TransaccionService {
 
         transaccionRepository.save(transaccion);
     }
-        @Transactional
+
+    @Transactional
     public void realizarTransferencia(Long cuentaOrigenId, Long cuentaDestinoId, Double monto) {
         if (cuentaOrigenId == null || cuentaDestinoId == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Las cuentas de origen y destino son obligatorias");
@@ -107,5 +114,16 @@ public class TransaccionService {
                 .cuenta(cuentaDestino)
                 .build();
         transaccionRepository.save(ingreso);
+    }
+
+    @Transactional(readOnly = true)
+    public List<TransaccionDTO> obtenerHistorialPorEmail(String email) {
+        Usuario usuario = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+
+        Cuenta cuenta = cuentaRepository.findByUsuarioIdAndTipoMoneda(usuario.getId(), TipoMoneda.ARS)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cuenta no encontrada"));
+
+        return transaccionRepository.obtenerHistorialPorCuentaId(cuenta.getId());
     }
 }

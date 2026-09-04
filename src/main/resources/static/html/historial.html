@@ -3,12 +3,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AlkyWallet - Panel de Control</title>
-    
-    <!-- CDN de Tailwind CSS -->
+    <title>AlkyWallet - Historial de Movimientos</title>
+
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Configuración de Colores Personalizados para Tailwind -->
+
     <script>
       tailwind.config = {
         theme: {
@@ -25,21 +23,18 @@
       }
     </script>
 
-    <!-- Enlace a tu hoja de estilos personalizada -->
     <link rel="stylesheet" href="../css/custom.css">
-    <script defer src="../js/dashboard.js"></script>
-    
+    <link rel="stylesheet" href="../css/historial.module.css">
+
+    <script defer src="../js/historial.js"></script>
 </head>
 <body class="bg-bgMain text-textLight min-h-screen flex flex-col md:flex-row relative font-sans m-0 p-0 overflow-x-hidden">
 
-    <!-- LUCES DE FONDO DE NEÓN -->
     <div class="absolute -top-10 -left-10 w-96 h-96 bg-fuchsiaNeon rounded-full opacity-20 filter blur-3xl pointer-events-none"></div>
     <div class="absolute -bottom-10 -right-10 w-96 h-96 bg-turquoiseNeon rounded-full opacity-20 filter blur-3xl pointer-events-none"></div>
 
-    <!-- SIDEBAR / MENÚ LATERAL -->
     <aside class="w-full md:w-72 bg-cardDark/80 backdrop-blur-md border-r border-gray-800 p-6 flex flex-col justify-between z-20 shrink-0">
         <div>
-            <!-- Branding / Logo -->
             <div class="flex items-center space-x-3 mb-10">
                 <div class="w-16 h-16 bg-cardDark border border-fuchsiaNeon rounded-2xl flex items-center justify-center glow-fuchsia-sm shadow-lg shrink-0">
                     <svg class="w-10 h-10" fill="none" stroke-width="2.5" viewBox="0 0 24 24">
@@ -54,9 +49,8 @@
                 </div>
             </div>
 
-            <!-- Navegación -->
             <nav class="menu space-y-2">
-                <a href="tableroDeControl.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gradient-to-r from-fuchsiaNeon to-purple-600 text-white font-semibold shadow-lg glow-button">
+                <a href="tableroDeControl.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition">
                     <span>Dashboard</span>
                 </a>
                 <a href="tranferencia.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition">
@@ -71,7 +65,6 @@
             </nav>
         </div>
 
-        <!-- Botón Salir en la barra lateral -->
         <div class="pt-6 border-t border-gray-800">
             <button id="btn-salir" class="w-full flex items-center space-x-2 text-gray-400 hover:text-red-400 transition text-sm font-medium">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -82,15 +75,13 @@
         </div>
     </aside>
 
-    <!-- CONTENIDO PRINCIPAL -->
     <main class="flex-grow flex flex-col justify-between p-6 md:p-10 z-10 min-h-screen">
-        
+
         <div>
-            <!-- HEADER SUPERIOR DE USUARIO -->
             <div class="flex justify-between items-center mb-8">
                 <div>
-                    <h2 class="text-2xl font-bold text-white">¡Hola, Evano! 👋</h2>
-                    <p class="text-xs text-gray-400 mt-1">Este es el resumen de tu cuenta</p>
+                    <h2 class="text-2xl font-bold text-white">Historial de Movimientos</h2>
+                    <p class="text-xs text-gray-400 mt-1">Todos tus ingresos y egresos</p>
                 </div>
                 <div class="flex items-center space-x-3 bg-cardDark/60 backdrop-blur-md px-4 py-2 rounded-full border border-gray-800">
                     <span class="text-sm font-medium text-white">Evano</span>
@@ -98,38 +89,13 @@
                 </div>
             </div>
 
-            <!-- TARJETAS DE RESUMEN FINANCIERO -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <!-- Saldo Total -->
-                <div class="bg-cardDark p-6 rounded-2xl border border-fuchsiaNeon/30 shadow-xl glow-card-fuchsia relative overflow-hidden">
-                    <p class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-2">Saldo Total Disponible</p>
-                    <h3 class="text-3xl font-extrabold text-white">$ 158.340,00</h3>
-                    <span class="inline-block mt-3 text-xs text-turquoiseNeon font-medium bg-turquoiseNeon/10 px-2.5 py-1 rounded-full">+12.5% este mes</span>
-                </div>
+            <div id="historial-container" class="historial-wrapper bg-cardDark rounded-2xl p-6 border border-gray-800 shadow-xl mb-6">
 
-                <!-- Ingresos -->
-                <div class="bg-cardDark p-6 rounded-2xl border border-gray-800 shadow-xl">
-                    <p class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-2">Ingresos del Mes</p>
-                    <h3 class="text-2xl font-bold text-emerald-400">$ 210.000,00</h3>
-                    <p class="text-xs text-gray-500 mt-3">Depósitos y transferencias recibidas</p>
-                </div>
+                <p id="historial-cargando" class="text-sm text-gray-400 text-center py-6">Cargando movimientos...</p>
+                <p id="historial-vacio" class="text-sm text-gray-400 text-center py-6 hidden">Todavía no tenés movimientos.</p>
+                <p id="historial-error" class="text-sm text-red-400 text-center py-6 hidden">No se pudo cargar el historial. Intentá de nuevo más tarde.</p>
 
-                <!-- Gastos -->
-                <div class="bg-cardDark p-6 rounded-2xl border border-gray-800 shadow-xl">
-                    <p class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-2">Egresos del Mes</p>
-                    <h3 class="text-2xl font-bold text-rose-400">$ 51.660,00</h3>
-                    <p class="text-xs text-gray-500 mt-3">Pagos y envíos de dinero</p>
-                </div>
-            </div>
-
-            <!-- TABLA DE ÚLTIMOS MOVIMIENTOS -->
-            <div class="bg-cardDark rounded-2xl p-6 border border-gray-800 shadow-xl mb-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-lg font-bold text-white">Últimos Movimientos</h3>
-                    <a href="historial.html" class="text-xs text-turquoiseNeon hover:underline font-semibold">Ver todos</a>
-                </div>
-
-                <div class="overflow-x-auto">
+                <div class="overflow-x-auto hidden" id="historial-tabla-wrapper">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="text-xs text-gray-500 border-b border-gray-800 uppercase tracking-wider">
@@ -139,32 +105,12 @@
                                 <th class="pb-3 font-medium text-right">Monto</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-800/60 text-sm">
-                            <tr>
-                                <td class="py-3.5 font-medium text-white">Transferencia enviada a Juan Pérez</td>
-                                <td class="py-3.5 text-xs text-gray-400">26/08/2026</td>
-                                <td class="py-3.5"><span class="text-xs bg-rose-500/10 text-rose-400 px-2 py-1 rounded-md">Egreso</span></td>
-                                <td class="py-3.5 text-right font-semibold text-rose-400">-$ 15.000,00</td>
-                            </tr>
-                            <tr>
-                                <td class="py-3.5 font-medium text-white">Depósito recibido en CBU</td>
-                                <td class="py-3.5 text-xs text-gray-400">24/08/2026</td>
-                                <td class="py-3.5"><span class="text-xs bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded-md">Ingreso</span></td>
-                                <td class="py-3.5 text-right font-semibold text-emerald-400">+$ 50.000,00</td>
-                            </tr>
-                            <tr>
-                                <td class="py-3.5 font-medium text-white">Carga de saldo Mercado Pago</td>
-                                <td class="py-3.5 text-xs text-gray-400">20/08/2026</td>
-                                <td class="py-3.5"><span class="text-xs bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded-md">Ingreso</span></td>
-                                <td class="py-3.5 text-right font-semibold text-emerald-400">+$ 160.000,00</td>
-                            </tr>
-                        </tbody>
+                        <tbody id="historial-tbody" class="historial-tbody divide-y divide-gray-800/60 text-sm"></tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- FOOTER -->
         <footer class="w-full text-center text-xs text-gray-500 mt-8">
             <p>&copy; 2026 ALKYWALLET. Todos los derechos reservados</p>
         </footer>
