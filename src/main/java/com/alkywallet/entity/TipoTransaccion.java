@@ -2,5 +2,7 @@ package com.alkywallet.entity;
 
 public enum TipoTransaccion {
     DEPOSITO,
-    TRANSFERENCIA
+    TRANSFERENCIA,
+    EGRESO,
+    INGRESO
 }
