@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
-        const response = await fetch('http://localhost:8080/api/transacciones/historial', {
+        const response = await fetch('/api/transacciones/historial', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             tdTipo.className = 'py-3.5';
             const badge = document.createElement('span');
             badge.classList.add('historial-badge', esIngreso ? 'historial-badge-ingreso' : 'historial-badge-egreso');
-            badge.textContent = esIngreso ? 'Ingreso' : 'Egreso';
+            badge.textContent = tipo === 'DEPOSITO' ? 'Depósito' : (esIngreso ? 'Transferencia Recibida' : 'Transferencia Enviada');
             tdTipo.appendChild(badge);
 
             const tdMonto = document.createElement('td');
