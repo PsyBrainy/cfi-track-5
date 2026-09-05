@@ -1,0 +1,72 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const formTransferencia = document.getElementById('form-transferencia');
+    const inputDestino = document.getElementById('cuenta-destino');
+    const inputMonto = document.getElementById('monto');
+    const btnCancelar = document.getElementById('btn-cancelar');
+    const mensajeNotificacion = document.getElementById('mensaje-notificacion');
+    const token = localStorage.getItem('token');
+
+    if (formTransferencia) {
+        formTransferencia.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const destinatario = inputDestino ? inputDestino.value.trim() : '';
+            const monto = inputMonto ? parseFloat(inputMonto.value) : 0;
+
+            if (!destinatario || isNaN(monto) || monto <= 0) {
+                mostrarMensaje('Por favor, ingresá un destinatario y un monto válido.', 'error');
+                return;
+            }
+
+            const transferenciaRequestDTO = {
+                destinatario: destinatario,
+                monto: monto
+            };
+
+            try {
+                const response = await fetch('http://localhost:8080/api/transacciones/transferencia', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(transferenciaRequestDTO)
+                });
+
+                if (response.ok) {
+                    mostrarMensaje('¡Transferencia realizada con éxito!', 'exito');
+                    formTransferencia.reset();
+                } else if (response.status === 400) {
+                    mostrarMensaje('Saldo insuficiente o datos inválidos.', 'error');
+                } else if (response.status === 401 || response.status === 403) {
+                    localStorage.removeItem('token');
+                    window.location.href = 'ingresar.html';
+                } else {
+                    mostrarMensaje('Ocurrió un error al procesar la transferencia.', 'error');
+                }
+            } catch (error) {
+                console.error('Error al realizar la transferencia:', error);
+                mostrarMensaje('Error de conexión con el servidor.', 'error');
+            }
+        });
+    }
+
+    if (btnCancelar) {
+        btnCancelar.addEventListener('click', () => {
+            if (formTransferencia) formTransferencia.reset();
+            if (mensajeNotificacion) mensajeNotificacion.classList.add('hidden');
+        });
+    }
+
+    function mostrarMensaje(texto, tipo) {
+        if (!mensajeNotificacion) return;
+        mensajeNotificacion.textContent = texto;
+        mensajeNotificacion.classList.remove('hidden', 'text-emerald-400', 'text-red-400');
+
+        if (tipo === 'exito') {
+            mensajeNotificacion.classList.add('text-emerald-400');
+        } else {
+            mensajeNotificacion.classList.add('text-red-400');
+        }
+    }
+});

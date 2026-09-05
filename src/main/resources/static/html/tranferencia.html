@@ -25,7 +25,7 @@
       };
     </script>
 
-    <!-- Enlace a tu hoja de estilos personalizada y JavaScript -->
+    <!-- Enlace a hoja de estilos personalizada y JavaScript -->
     <link rel="stylesheet" href="../css/custom.css" />
     <script defer src="../js/tranferencia.js"></script>
   </head>
@@ -133,10 +133,10 @@
           <!-- 2. Transferencias -->
           <a
             href="tranferencia.html"
-            class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-cardDark/80 hover:text-white transition font-medium text-sm"
+            class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gradient-to-r from-fuchsiaNeon to-purple-600 text-white font-semibold shadow-lg text-sm"
           >
             <svg
-              class="w-5 h-5 opacity-80"
+              class="w-5 h-5 opacity-90"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -175,10 +175,10 @@
           <!-- 4. Perfil -->
           <a
             href="perfil.html"
-            class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-fuchsiaNeon text-white font-semibold text-sm transition shadow-lg shadow-fuchsiaNeon/20"
+            class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-cardDark/80 hover:text-white transition font-medium text-sm"
           >
             <svg
-              class="w-5 h-5 opacity-90"
+              class="w-5 h-5 opacity-80"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -252,7 +252,7 @@
               Transferir dinero
             </h2>
 
-            <form class="space-y-4">
+            <form id="form-transferencia" class="space-y-4">
               <!-- Cuenta Origen -->
               <div class="campo">
                 <label
@@ -329,6 +329,9 @@
                   Cancelar
                 </button>
               </div>
+
+              <!-- Mensaje de Notificación -->
+              <div id="mensaje-notificacion" class="text-xs text-center font-medium hidden pt-2"></div>
             </form>
           </div>
         </div>

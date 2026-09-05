@@ -5,7 +5,7 @@ import com.alkywallet.entity.Cuenta;
 import com.alkywallet.entity.TipoMoneda;
 import com.alkywallet.entity.Usuario;
 import com.alkywallet.repository.CuentaRepository;
-import com.alkywallet.repository.UsuarioRepository;
+import com.alkywallet.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,11 +18,11 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class CuentaService {
     private final CuentaRepository cuentaRepository;
-    private final UsuarioRepository usuarioRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public CuentaDTO obtenerBalancePorUsuarioId(Long usuarioId) {
-        Usuario usuario = usuarioRepository.findById(usuarioId)
+        Usuario usuario = userRepository.findById(usuarioId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
 
         Cuenta cuenta = cuentaRepository.findByUsuarioIdAndTipoMoneda(usuario.getId(), TipoMoneda.ARS)
@@ -37,7 +37,7 @@ public class CuentaService {
 
     @Transactional
     public CuentaDTO obtenerBalancePorEmail(String email) {
-        Usuario usuario = usuarioRepository.findByEmail(email)
+        Usuario usuario = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
 
         Cuenta cuenta = cuentaRepository.findByUsuarioIdAndTipoMoneda(usuario.getId(), TipoMoneda.ARS)

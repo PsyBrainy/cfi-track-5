@@ -1,7 +1,7 @@
 package com.alkywallet.security;
 
 import com.alkywallet.entity.Usuario;
-import com.alkywallet.repository.UsuarioRepository;
+import com.alkywallet.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,11 +22,11 @@ import java.util.List;
 @NullMarked
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final UsuarioRepository usuarioRepository;
+    private final UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Usuario usuario = usuarioRepository.findByEmail(email)
+        Usuario usuario = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con email: " + email));
 
         return new User(

@@ -15,7 +15,12 @@ import java.time.LocalDateTime;
  * Una vez creada, no puede modificarse (sin setters públicos para sus campos).
  */
 @Entity
-@Table(name = "transacciones")
+@Table(
+    name = "transacciones",
+    indexes = {
+        @Index(name = "idx_cuenta_fecha", columnList = "cuenta_id, fecha")
+    }
+)
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // requerido por Hibernate, sin uso externo

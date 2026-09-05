@@ -25,9 +25,8 @@
       };
     </script>
 
-    <!-- Enlace a tu hoja de estilos personalizada -->
+    <!-- Enlace a hoja de estilos personalizada -->
     <link rel="stylesheet" href="../css/custom.css" />
-    <script defer></script>
   </head>
   <body
     class="bg-bgMain text-textLight min-h-screen flex flex-col md:flex-row relative overflow-x-hidden font-sans"
@@ -154,10 +153,10 @@
           <!-- 3. Depósitos -->
           <a
             href="deposito.html"
-            class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-cardDark/80 hover:text-white transition font-medium text-sm"
+            class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gradient-to-r from-fuchsiaNeon to-purple-600 text-white font-semibold shadow-lg text-sm"
           >
             <svg
-              class="w-5 h-5 opacity-80"
+              class="w-5 h-5 opacity-90"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -175,10 +174,10 @@
           <!-- 4. Perfil -->
           <a
             href="perfil.html"
-            class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-fuchsiaNeon text-white font-semibold text-sm transition shadow-lg shadow-fuchsiaNeon/20"
+            class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-cardDark/80 hover:text-white transition font-medium text-sm"
           >
             <svg
-              class="w-5 h-5 opacity-90"
+              class="w-5 h-5 opacity-80"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -337,6 +336,19 @@
                 </div>
               </div>
 
+              <!-- Campo para Ingresar Monto -->
+              <div class="campo">
+                <label for="monto" class="block text-xs text-gray-400 mb-1 font-medium">Monto a depositar</label>
+                <div class="flex items-center bg-[#0D0B14] border border-gray-800 rounded-xl px-4 py-2.5 focus-within:border-turquoiseNeon w-full">
+                  <span class="text-gray-400 mr-2">$</span>
+                  <input type="number" id="monto" name="monto" placeholder="0.00" min="1" step="any"
+                         class="bg-transparent flex-1 text-sm text-white outline-none">
+                </div>
+              </div>
+
+              <!-- Mensaje de Notificación -->
+              <div id="mensaje-notificacion" class="text-xs text-center font-medium hidden"></div>
+
               <!-- Botón Principal -->
               <div class="botones-accion pt-4">
                 <button
@@ -344,7 +356,7 @@
                   id="btn-depositar"
                   class="w-full bg-gradient-to-r from-fuchsiaNeon to-turquoiseNeon text-white font-bold py-3 rounded-xl shadow-lg hover:opacity-90 transition duration-300 glow-button"
                 >
-                  Compartir Datos
+                  Depositar
                 </button>
               </div>
             </form>
@@ -358,7 +370,8 @@
       </footer>
     </main>
 
-    <!-- Script de interfaz para el menú en Mobile -->
+    <!-- Scripts -->
+    <script src="../js/deposito.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const btnMenu = document.getElementById("btn-menu");
