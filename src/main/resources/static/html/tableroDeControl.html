@@ -1,193 +1,396 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>AlkyWallet - Panel de Control</title>
-    
+
     <!-- CDN de Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- Configuración de Colores Personalizados para Tailwind -->
     <script>
       tailwind.config = {
         theme: {
           extend: {
             colors: {
-              bgMain: '#0D0B14',
-              cardDark: '#161221',
-              fuchsiaNeon: '#E025CE',
-              turquoiseNeon: '#00F2FE',
-              textLight: '#F4F4F6',
-            }
-          }
-        }
-      }
+              bgMain: "#0D0B14",
+              cardDark: "#161221",
+              fuchsiaNeon: "#E025CE",
+              turquoiseNeon: "#00F2FE",
+              textLight: "#F4F4F6",
+            },
+          },
+        },
+      };
     </script>
 
-    <!-- Enlace a tu hoja de estilos personalizada -->
-    <link rel="stylesheet" href="../css/custom.css">
+    <!-- Enlaces a Hojas de Estilo y Scripts -->
+    <link rel="stylesheet" href="../css/custom.css" />
+    <link rel="stylesheet" href="../css/dashboard.module.css" />
     <script defer src="../js/dashboard.js"></script>
     <script defer src="../js/reporteGastos.js"></script>
-    
-</head>
-<body class="bg-bgMain text-textLight min-h-screen flex flex-col md:flex-row relative font-sans m-0 p-0 overflow-x-hidden">
-
+  </head>
+  <body
+    class="bg-bgMain text-textLight min-h-screen flex flex-col md:flex-row relative font-sans m-0 p-0 overflow-x-hidden"
+  >
     <!-- LUCES DE FONDO DE NEÓN -->
-    <div class="absolute -top-10 -left-10 w-96 h-96 bg-fuchsiaNeon rounded-full opacity-20 filter blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-10 -right-10 w-96 h-96 bg-turquoiseNeon rounded-full opacity-20 filter blur-3xl pointer-events-none"></div>
+    <div
+      class="absolute -top-10 -left-10 w-96 h-96 bg-fuchsiaNeon rounded-full opacity-20 filter blur-3xl pointer-events-none"
+    ></div>
+    <div
+      class="absolute -bottom-10 -right-10 w-96 h-96 bg-turquoiseNeon rounded-full opacity-20 filter blur-3xl pointer-events-none"
+    ></div>
 
     <!-- SIDEBAR / MENÚ LATERAL -->
-    <aside class="w-full md:w-72 bg-cardDark/80 backdrop-blur-md border-r border-gray-800 p-6 flex flex-col justify-between z-20 shrink-0">
-        <div>
-            <!-- Branding / Logo -->
-            <div class="flex items-center space-x-3 mb-10">
-                <div class="w-16 h-16 bg-cardDark border border-fuchsiaNeon rounded-2xl flex items-center justify-center glow-fuchsia-sm shadow-lg shrink-0">
-                    <svg class="w-10 h-10" fill="none" stroke-width="2.5" viewBox="0 0 24 24">
-                        <path stroke="#00F2FE" stroke-linecap="round" stroke-linejoin="round" d="M7 20V4m0 0L3 8m4-4l4 4" />
-                        <path stroke="#E025CE" stroke-linecap="round" stroke-linejoin="round" d="M17 4v16m0 0l4-4m-4 4l-4-4" />
-                    </svg>
-                </div>
-                <div>
-                    <h1 class="text-2xl font-extrabold tracking-wider whitespace-nowrap">
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-fuchsiaNeon to-turquoiseNeon">ALKY</span>WALLET
-                    </h1>
-                </div>
+    <aside
+      class="w-full md:w-64 bg-cardDark/80 backdrop-blur-md border-b md:border-b-0 md:border-r border-gray-800 p-4 md:p-6 flex flex-col justify-between z-20 shrink-0"
+    >
+      <div>
+        <!-- Header Móvil + Logo -->
+        <div
+          class="flex items-center justify-between md:justify-start space-x-3 mb-4 md:mb-8"
+        >
+          <div class="flex items-center space-x-3">
+            <div
+              class="w-10 h-10 md:w-12 md:h-12 bg-cardDark border border-fuchsiaNeon rounded-xl flex items-center justify-center shadow-lg shrink-0"
+            >
+              <svg
+                class="w-6 h-6 md:w-7 md:h-7"
+                fill="none"
+                stroke-width="2.5"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke="#00F2FE"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M7 20V4m0 0L3 8m4-4l4 4"
+                />
+                <path
+                  stroke="#E025CE"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M17 4v16m0 0l4-4m-4 4l-4-4"
+                />
+              </svg>
             </div>
+            <h1
+              class="text-lg md:text-xl font-extrabold tracking-wider whitespace-nowrap"
+            >
+              <span
+                class="text-transparent bg-clip-text bg-gradient-to-r from-fuchsiaNeon to-turquoiseNeon"
+                >ALKY</span
+              >WALLET
+            </h1>
+          </div>
 
-            <!-- Navegación -->
-            <nav class="menu space-y-2">
-                <a href="tableroDeControl.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gradient-to-r from-fuchsiaNeon to-purple-600 text-white font-semibold shadow-lg glow-button">
-                    <span>Dashboard</span>
-                </a>
-                <a href="tranferencia.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition">
-                    <span>Transferencias</span>
-                </a>
-                <a href="deposito.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition">
-                    <span>Depósitos</span>
-                </a>
-                <a href="perfil.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition">
-                    <span>Perfil</span>
-                </a>
-            </nav>
+          <!-- Botón Hamburguesa (Solo visible en Mobile) -->
+          <button
+            id="btn-menu"
+            class="md:hidden text-gray-400 hover:text-white focus:outline-none"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
         </div>
 
-        <!-- Botón Salir en la barra lateral -->
-        <div class="pt-6 border-t border-gray-800">
-            <button id="btn-salir" class="w-full flex items-center space-x-2 text-gray-400 hover:text-red-400 transition text-sm font-medium">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5" />
-                </svg>
-                <span>Salir de ALKYWALLET</span>
-            </button>
-        </div>
+        <!-- Navegación: Oculta en Mobile por defecto (`hidden`), visible en Desktop (`md:flex`) -->
+        <nav
+          id="menu-nav"
+          class="hidden md:flex flex-col space-y-2 mt-4 md:mt-0 border-t border-gray-800/80 pt-4 md:pt-0 md:border-0"
+        >
+          <!-- 1. Dashboard -->
+          <a
+            href="tableroDeControl.html"
+            class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gradient-to-r from-fuchsiaNeon to-purple-600 text-white font-semibold shadow-lg text-sm"
+          >
+            <svg
+              class="w-5 h-5 opacity-90"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+              />
+            </svg>
+            <span>Dashboard</span>
+          </a>
+
+          <!-- 2. Transferencias -->
+          <a
+            href="tranferencia.html"
+            class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-cardDark/80 hover:text-white transition font-medium text-sm"
+          >
+            <svg
+              class="w-5 h-5 opacity-80"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+              />
+            </svg>
+            <span>Transferencias</span>
+          </a>
+
+          <!-- 3. Depósitos -->
+          <a
+            href="deposito.html"
+            class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-cardDark/80 hover:text-white transition font-medium text-sm"
+          >
+            <svg
+              class="w-5 h-5 opacity-80"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              />
+            </svg>
+            <span>Depósitos</span>
+          </a>
+
+          <!-- 4. Perfil -->
+          <a
+            href="perfil.html"
+            class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-cardDark/80 hover:text-white transition font-medium text-sm"
+          >
+            <svg
+              class="w-5 h-5 opacity-80"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+              />
+            </svg>
+            <span>Perfil</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Botón Salir -->
+      <div
+        id="menu-salir"
+        class="hidden md:block pt-4 border-t border-gray-800 mt-6"
+      >
+        <button
+          id="btn-salir"
+          class="w-full flex items-center space-x-2 text-gray-400 hover:text-red-400 transition text-sm font-medium"
+        >
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5"
+            />
+          </svg>
+          <span>Salir de ALKYWALLET</span>
+        </button>
+      </div>
     </aside>
 
     <!-- CONTENIDO PRINCIPAL -->
-    <main class="flex-grow flex flex-col justify-between p-6 md:p-10 z-10 min-h-screen">
-        
-        <div>
-            <!-- HEADER SUPERIOR DE USUARIO -->
-            <div class="flex justify-between items-center mb-8">
-                <div>
-                    <h2 class="text-2xl font-bold text-white">¡Hola, Evano! 👋</h2>
-                    <p class="text-xs text-gray-400 mt-1">Este es el resumen de tu cuenta</p>
-                </div>
-                <div class="flex items-center space-x-3 bg-cardDark/60 backdrop-blur-md px-4 py-2 rounded-full border border-gray-800">
-                    <span class="text-sm font-medium text-white">Evano</span>
-                    <img src="https://i.pravatar.cc/100?img=12" alt="Foto de Perfil" class="w-8 h-8 rounded-full border border-turquoiseNeon object-cover">
-                </div>
-            </div>
+    <main
+      class="flex-grow flex flex-col justify-between p-6 md:p-12 z-10 min-h-screen"
+    >
+      <div>
+        <!-- HEADER SUPERIOR DE USUARIO -->
+        <div class="flex justify-between items-center mb-6">
+          <div>
+            <h2 class="text-xl md:text-2xl font-bold text-white">
+              Bienvenido,
+              <span
+                id="nombre-usuario"
+                class="text-transparent bg-clip-text bg-gradient-to-r from-fuchsiaNeon to-turquoiseNeon"
+                >Evano</span
+              > 👋
+            </h2>
+            <p class="text-xs text-gray-400">Resumen general de tu cuenta</p>
+          </div>
 
-            <!-- TARJETAS DE RESUMEN FINANCIERO -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <!-- Saldo Total -->
-                <div class="bg-cardDark p-6 rounded-2xl border border-fuchsiaNeon/30 shadow-xl glow-card-fuchsia relative overflow-hidden">
-                    <p class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-2">Saldo Total Disponible</p>
-                    <h3 class="text-3xl font-extrabold text-white">$ 158.340,00</h3>
-                    <span class="inline-block mt-3 text-xs text-turquoiseNeon font-medium bg-turquoiseNeon/10 px-2.5 py-1 rounded-full">+12.5% este mes</span>
-                </div>
-
-                <!-- Ingresos -->
-                <div class="bg-cardDark p-6 rounded-2xl border border-gray-800 shadow-xl">
-                    <p class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-2">Ingresos del Mes</p>
-                    <h3 class="text-2xl font-bold text-emerald-400">$ 210.000,00</h3>
-                    <p class="text-xs text-gray-500 mt-3">Depósitos y transferencias recibidas</p>
-                </div>
-
-                <!-- Gastos -->
-                <div class="bg-cardDark p-6 rounded-2xl border border-gray-800 shadow-xl">
-                    <p class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-2">Egresos del Mes</p>
-                    <h3 class="text-2xl font-bold text-rose-400">$ 51.660,00</h3>
-                    <p class="text-xs text-gray-500 mt-3">Pagos y envíos de dinero</p>
-                </div>
-            </div>
-
-            <!-- REPORTE DE GASTOS -->
-            <div class="bg-cardDark rounded-2xl p-6 border border-gray-800 shadow-xl mb-8">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-                    <div>
-                        <h3 class="text-lg font-bold text-white">Distribución de Movimientos</h3>
-                        <p class="text-xs text-gray-400 mt-1">Análisis proporcional de ingresos y gastos por categoría</p>
-                    </div>
-                    <div id="reporte-total-gastos" class="mt-2 sm:mt-0 text-xs font-semibold text-turquoiseNeon bg-turquoiseNeon/10 px-3 py-1.5 rounded-full self-start sm:self-auto">
-                        Cálculo en tiempo real
-                    </div>
-                </div>
-
-                <div id="reporte-gastos-contenedor" class="space-y-4">
-                    <p class="text-xs text-center text-gray-500 py-4">Cargando reporte de gastos...</p>
-                </div>
-            </div>
-
-            <!-- TABLA DE ÚLTIMOS MOVIMIENTOS -->
-            <div class="bg-cardDark rounded-2xl p-6 border border-gray-800 shadow-xl mb-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-lg font-bold text-white">Últimos Movimientos</h3>
-                    <a href="historial.html" class="text-xs text-turquoiseNeon hover:underline font-semibold">Ver todos</a>
-                </div>
-
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="text-xs text-gray-500 border-b border-gray-800 uppercase tracking-wider">
-                                <th class="pb-3 font-medium">Descripción</th>
-                                <th class="pb-3 font-medium">Fecha</th>
-                                <th class="pb-3 font-medium">Tipo</th>
-                                <th class="pb-3 font-medium text-right">Monto</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-800/60 text-sm">
-                            <tr>
-                                <td class="py-3.5 font-medium text-white">Transferencia enviada a Juan Pérez</td>
-                                <td class="py-3.5 text-xs text-gray-400">26/08/2026</td>
-                                <td class="py-3.5"><span class="text-xs bg-rose-500/10 text-rose-400 px-2 py-1 rounded-md">Egreso</span></td>
-                                <td class="py-3.5 text-right font-semibold text-rose-400">-$ 15.000,00</td>
-                            </tr>
-                            <tr>
-                                <td class="py-3.5 font-medium text-white">Depósito recibido en CBU</td>
-                                <td class="py-3.5 text-xs text-gray-400">24/08/2026</td>
-                                <td class="py-3.5"><span class="text-xs bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded-md">Ingreso</span></td>
-                                <td class="py-3.5 text-right font-semibold text-emerald-400">+$ 50.000,00</td>
-                            </tr>
-                            <tr>
-                                <td class="py-3.5 font-medium text-white">Carga de saldo Mercado Pago</td>
-                                <td class="py-3.5 text-xs text-gray-400">20/08/2026</td>
-                                <td class="py-3.5"><span class="text-xs bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded-md">Ingreso</span></td>
-                                <td class="py-3.5 text-right font-semibold text-emerald-400">+$ 160.000,00</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+          <!-- Avatar superior -->
+          <div
+            class="flex items-center space-x-3 bg-cardDark/60 backdrop-blur-md px-4 py-2 rounded-full border border-gray-800"
+          >
+            <span class="text-sm font-medium text-white">Evano</span>
+            <img
+              src="https://i.pravatar.cc/100?img=12"
+              alt="Foto de Perfil"
+              class="w-8 h-8 rounded-full border border-turquoiseNeon object-cover"
+            />
+          </div>
         </div>
 
-        <!-- FOOTER -->
-        <footer class="w-full text-center text-xs text-gray-500 mt-8">
-            <p>&copy; 2026 ALKYWALLET. Todos los derechos reservados</p>
-        </footer>
+        <!-- CONTENEDOR DEL DASHBOARD -->
+        <div class="max-w-4xl mx-auto w-full space-y-6">
+          <!-- Card Balance -->
+          <div
+            class="bg-cardDark rounded-2xl p-6 md:p-8 border border-fuchsiaNeon/30 shadow-2xl glow-card-fuchsia flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
+          >
+            <div>
+              <p
+                class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1"
+              >
+                Balance Total
+              </p>
+              <h2
+                id="saldo-disponible"
+                class="text-3xl md:text-4xl font-extrabold text-white"
+              >
+                $ 0,00
+              </h2>
+            </div>
+            <div class="flex gap-3 w-full md:w-auto">
+              <a
+                href="deposito.html"
+                class="flex-1 md:flex-none text-center bg-fuchsiaNeon text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:opacity-90 transition shadow-lg shadow-fuchsiaNeon/20"
+                >Ingresar</a
+              >
+              <a
+                href="tranferencia.html"
+                class="flex-1 md:flex-none text-center border border-turquoiseNeon text-turquoiseNeon px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-turquoiseNeon/10 transition"
+                >Transferir</a
+              >
+            </div>
+          </div>
 
+          <!-- REPORTE DE GASTOS -->
+          <div class="bg-cardDark rounded-2xl p-6 border border-gray-800 shadow-xl">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+              <div>
+                <h3 class="text-lg font-bold text-white">Distribución de Movimientos</h3>
+                <p class="text-xs text-gray-400 mt-1">Análisis proporcional de ingresos y gastos por categoría</p>
+              </div>
+              <div id="reporte-total-gastos" class="mt-2 sm:mt-0 text-xs font-semibold text-turquoiseNeon bg-turquoiseNeon/10 px-3 py-1.5 rounded-full self-start sm:self-auto">
+                Cálculo en tiempo real
+              </div>
+            </div>
+
+            <div id="reporte-gastos-contenedor" class="space-y-4">
+              <p class="text-xs text-center text-gray-500 py-4">Cargando reporte de gastos...</p>
+            </div>
+          </div>
+
+          <!-- Sección Movimientos -->
+          <div
+            class="bg-cardDark rounded-2xl p-6 border border-gray-800 shadow-xl"
+          >
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-lg font-bold text-white">Últimos Movimientos</h3>
+              <a
+                href="historial.html"
+                class="text-xs text-turquoiseNeon hover:underline font-semibold"
+                >Ver todos</a
+              >
+            </div>
+
+            <!-- Lista de movimientos de muestra -->
+            <div id="lista-movimientos" class="space-y-3">
+              <!-- Movimiento 1 -->
+              <div
+                class="flex items-center justify-between p-3 rounded-xl bg-[#0D0B14] border border-gray-800/60"
+              >
+                <div class="flex items-center space-x-3">
+                  <div
+                    class="w-10 h-10 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20 font-bold"
+                  >
+                    ↓
+                  </div>
+                  <div>
+                    <p class="text-sm font-semibold text-white">
+                      Depósito Recibido
+                    </p>
+                    <p class="text-xs text-gray-400">Hoy, 14:20 hs</p>
+                  </div>
+                </div>
+                <span class="text-sm font-bold text-emerald-400"
+                  >+ $ 15.000,00</span
+                >
+              </div>
+
+              <!-- Movimiento 2 -->
+              <div
+                class="flex items-center justify-between p-3 rounded-xl bg-[#0D0B14] border border-gray-800/60"
+              >
+                <div class="flex items-center space-x-3">
+                  <div
+                    class="w-10 h-10 rounded-full bg-rose-500/10 text-rose-400 flex items-center justify-center border border-rose-500/20 font-bold"
+                  >
+                    ↑
+                  </div>
+                  <div>
+                    <p class="text-sm font-semibold text-white">
+                      Transferencia Enviada
+                    </p>
+                    <p class="text-xs text-gray-400">Ayer, 09:15 hs</p>
+                  </div>
+                </div>
+                <span class="text-sm font-bold text-rose-400"
+                  >- $ 3.200,00</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FOOTER -->
+      <footer class="w-full text-center text-xs text-gray-500 mt-8">
+        <p>&copy; 2026 ALKYWALLET. Todos los derechos reservados</p>
+      </footer>
     </main>
 
-</body>
+    <!-- Script para menú móvil -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const btnMenu = document.getElementById("btn-menu");
+        const menuNav = document.getElementById("menu-nav");
+        const menuSalir = document.getElementById("menu-salir");
+
+        if (btnMenu && menuNav) {
+          btnMenu.addEventListener("click", () => {
+            menuNav.classList.toggle("hidden");
+            if (menuSalir) {
+              menuSalir.classList.toggle("hidden");
+            }
+          });
+        }
+      });
+    </script>
+  </body>
 </html>
