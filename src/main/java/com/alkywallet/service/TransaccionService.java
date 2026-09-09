@@ -1,9 +1,12 @@
 package com.alkywallet.service;
 
+import com.alkywallet.dto.GastoPorCategoriaDTO;
 import com.alkywallet.dto.GastoPorTipoDTO;
 import com.alkywallet.dto.TransaccionDTO;
+import com.alkywallet.exception.MonedaIncompatibleException;
 import com.alkywallet.exception.ResourceNotFoundException;
 import com.alkywallet.exception.SaldoInsuficienteException;
+import com.alkywallet.entity.CategoriaTransaccion;
 import com.alkywallet.entity.Cuenta;
 import com.alkywallet.entity.TipoMoneda;
 import com.alkywallet.entity.TipoTransaccion;
@@ -19,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -31,15 +35,20 @@ public class TransaccionService {
 
     @Transactional
     public void realizarDepositoPorEmail(String email, Double monto) {
+        realizarDepositoPorEmail(email, monto, TipoMoneda.ARS);
+    }
+    
+    @Transactional
+    public void realizarDepositoPorEmail(String email, Double monto, TipoMoneda moneda) {
         Usuario usuario = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
 
-        Cuenta cuenta = cuentaRepository.findByUsuarioIdAndTipoMoneda(usuario.getId(), TipoMoneda.ARS)
+        Cuenta cuenta = cuentaRepository.findByUsuarioIdAndTipoMoneda(usuario.getId(), moneda)
                 .orElseGet(() -> {
                     Cuenta nueva = Cuenta.builder()
                             .usuario(usuario)
                             .saldo(BigDecimal.ZERO)
-                            .tipoMoneda(TipoMoneda.ARS)
+                            .tipoMoneda(moneda)
                             .isDeleted(false)
                             .build();
                     return cuentaRepository.save(nueva);
@@ -57,7 +66,7 @@ public class TransaccionService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El monto debe ser mayor a cero");
         }
 
-        Cuenta cuenta = cuentaRepository.findById(cuentaId)
+        Cuenta cuenta = cuentaRepository.findByIdForUpdate(cuentaId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cuenta no encontrada"));
 
         if (cuenta.isDeleted()) {
@@ -83,6 +92,18 @@ public class TransaccionService {
 
     @Transactional
     public void realizarTransferenciaPorEmail(String emailOrigen, String destinatarioEmail, Double monto) {
+        realizarTransferenciaPorEmail(emailOrigen, destinatarioEmail, monto, CategoriaTransaccion.TRANSFERENCIA, TipoMoneda.ARS);
+    }
+
+    @Transactional
+    public void realizarTransferenciaPorEmail(String emailOrigen, String destinatarioEmail, Double monto,
+                                               CategoriaTransaccion categoria) {
+        realizarTransferenciaPorEmail(emailOrigen, destinatarioEmail, monto, categoria, TipoMoneda.ARS);
+    }
+    
+    @Transactional
+    public void realizarTransferenciaPorEmail(String emailOrigen, String destinatarioEmail, Double monto,
+                                               CategoriaTransaccion categoria, TipoMoneda moneda) {
         if (emailOrigen.trim().equalsIgnoreCase(destinatarioEmail.trim())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No podés transferirte dinero a vos mismo");
         }
@@ -90,20 +111,26 @@ public class TransaccionService {
         Usuario usuarioOrigen = userRepository.findByEmail(emailOrigen)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario origen no encontrado"));
 
-        Cuenta cuentaOrigen = cuentaRepository.findByUsuarioIdAndTipoMoneda(usuarioOrigen.getId(), TipoMoneda.ARS)
+        Cuenta cuentaOrigen = cuentaRepository.findByUsuarioIdAndTipoMoneda(usuarioOrigen.getId(), moneda)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cuenta origen no encontrada"));
 
         Usuario usuarioDestino = userRepository.findByEmail(destinatarioEmail.trim())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe un usuario con el email: " + destinatarioEmail));
 
-        Cuenta cuentaDestino = cuentaRepository.findByUsuarioIdAndTipoMoneda(usuarioDestino.getId(), TipoMoneda.ARS)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "El destinatario no posee una cuenta activa"));
+        Cuenta cuentaDestino = cuentaRepository.findByUsuarioIdAndTipoMoneda(usuarioDestino.getId(), moneda)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "El destinatario no posee una cuenta activa en " + moneda));
 
-        realizarTransferencia(cuentaOrigen.getId(), cuentaDestino.getId(), monto);
+        realizarTransferencia(cuentaOrigen.getId(), cuentaDestino.getId(), monto, categoria);
     }
 
     @Transactional
     public void realizarTransferencia(Long cuentaOrigenId, Long cuentaDestinoId, Double monto) {
+        realizarTransferencia(cuentaOrigenId, cuentaDestinoId, monto, CategoriaTransaccion.TRANSFERENCIA);
+    }
+
+    @Transactional
+    public void realizarTransferencia(Long cuentaOrigenId, Long cuentaDestinoId, Double monto,
+                                       CategoriaTransaccion categoriaSolicitada) {
         if (cuentaOrigenId == null || cuentaDestinoId == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Las cuentas de origen y destino son obligatorias");
         }
@@ -114,14 +141,26 @@ public class TransaccionService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El monto debe ser mayor a cero");
         }
 
-        Cuenta cuentaOrigen = cuentaRepository.findById(cuentaOrigenId)
-                .orElseThrow(() -> new ResourceNotFoundException("Cuenta origen no encontrada"));
+        CategoriaTransaccion categoria = categoriaSolicitada != null ? categoriaSolicitada : CategoriaTransaccion.TRANSFERENCIA;
 
-        Cuenta cuentaDestino = cuentaRepository.findById(cuentaDestinoId)
-                .orElseThrow(() -> new ResourceNotFoundException("Cuenta destino no encontrada"));
+        // PREVENT DEADLOCKS: Order acquiring pessimistic locks by ID
+        Long minId = Math.min(cuentaOrigenId, cuentaDestinoId);
+        Long maxId = Math.max(cuentaOrigenId, cuentaDestinoId);
+        
+        Cuenta firstLock = cuentaRepository.findByIdForUpdate(minId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cuenta " + minId + " no encontrada"));
+        Cuenta secondLock = cuentaRepository.findByIdForUpdate(maxId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cuenta " + maxId + " no encontrada"));
+
+        Cuenta cuentaOrigen = cuentaOrigenId.equals(minId) ? firstLock : secondLock;
+        Cuenta cuentaDestino = cuentaDestinoId.equals(minId) ? firstLock : secondLock;
 
         if (cuentaOrigen.isDeleted() || cuentaDestino.isDeleted()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No se puede transferir desde o hacia una cuenta inactiva");
+        }
+        
+        if (cuentaOrigen.getTipoMoneda() != cuentaDestino.getTipoMoneda()) {
+            throw new MonedaIncompatibleException("No se pueden realizar transferencias directas entre diferentes monedas");
         }
 
         BigDecimal montoBigDecimal = BigDecimal.valueOf(monto);
@@ -130,12 +169,12 @@ public class TransaccionService {
             throw new SaldoInsuficienteException("Saldo insuficiente en la cuenta origen");
         }
 
-        String infoDestino = (cuentaDestino.getUsuario() != null && cuentaDestino.getUsuario().getEmail() != null)
-                ? cuentaDestino.getUsuario().getEmail()
+        String infoDestino = (cuentaDestino.getUsuario() != null)
+                ? cuentaDestino.getUsuario().getNombre() + " " + cuentaDestino.getUsuario().getApellido()
                 : String.valueOf(cuentaDestinoId);
 
-        String infoOrigen = (cuentaOrigen.getUsuario() != null && cuentaOrigen.getUsuario().getEmail() != null)
-                ? cuentaOrigen.getUsuario().getEmail()
+        String infoOrigen = (cuentaOrigen.getUsuario() != null)
+                ? cuentaOrigen.getUsuario().getNombre() + " " + cuentaOrigen.getUsuario().getApellido()
                 : String.valueOf(cuentaOrigenId);
 
         // --- Débito en cuenta origen ---
@@ -147,6 +186,7 @@ public class TransaccionService {
                 .fecha(LocalDateTime.now())
                 .tipo(TipoTransaccion.EGRESO)
                 .concepto("Transferencia a cuenta " + infoDestino)
+                .categoria(categoria)
                 .cuenta(cuentaOrigen)
                 .build();
         transaccionRepository.save(egreso);
@@ -160,6 +200,7 @@ public class TransaccionService {
                 .fecha(LocalDateTime.now())
                 .tipo(TipoTransaccion.INGRESO)
                 .concepto("Transferencia desde cuenta " + infoOrigen)
+                .categoria(categoria)
                 .cuenta(cuentaDestino)
                 .build();
         transaccionRepository.save(ingreso);
@@ -167,10 +208,15 @@ public class TransaccionService {
 
     @Transactional(readOnly = true)
     public List<TransaccionDTO> obtenerHistorialPorEmail(String email) {
+        return obtenerHistorialPorEmail(email, TipoMoneda.ARS);
+    }
+
+    @Transactional(readOnly = true)
+    public List<TransaccionDTO> obtenerHistorialPorEmail(String email, TipoMoneda moneda) {
         Usuario usuario = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
 
-        Cuenta cuenta = cuentaRepository.findByUsuarioIdAndTipoMoneda(usuario.getId(), TipoMoneda.ARS)
+        Cuenta cuenta = cuentaRepository.findByUsuarioIdAndTipoMoneda(usuario.getId(), moneda)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cuenta no encontrada"));
 
         return transaccionRepository.obtenerHistorialPorCuentaId(cuenta.getId());
@@ -178,12 +224,51 @@ public class TransaccionService {
 
     @Transactional(readOnly = true)
     public List<GastoPorTipoDTO> obtenerReporteGastosPorEmail(String email) {
+        return obtenerReporteGastosPorEmail(email, TipoMoneda.ARS);
+    }
+    
+    @Transactional(readOnly = true)
+    public List<GastoPorTipoDTO> obtenerReporteGastosPorEmail(String email, TipoMoneda moneda) {
         Usuario usuario = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
 
-        Cuenta cuenta = cuentaRepository.findByUsuarioIdAndTipoMoneda(usuario.getId(), TipoMoneda.ARS)
+        Cuenta cuenta = cuentaRepository.findByUsuarioIdAndTipoMoneda(usuario.getId(), moneda)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cuenta no encontrada"));
 
         return transaccionRepository.obtenerTotalPorTipoYCuentaId(cuenta.getId());
+    }
+
+    @Transactional(readOnly = true)
+    public List<GastoPorCategoriaDTO> obtenerReporteCategoriasPorEmail(String email) {
+        return obtenerReporteCategoriasPorEmail(email, TipoMoneda.ARS);
+    }
+    
+    @Transactional(readOnly = true)
+    public List<GastoPorCategoriaDTO> obtenerReporteCategoriasPorEmail(String email, TipoMoneda moneda) {
+        Usuario usuario = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+
+        Cuenta cuenta = cuentaRepository.findByUsuarioIdAndTipoMoneda(usuario.getId(), moneda)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cuenta no encontrada"));
+
+        return transaccionRepository.obtenerTotalPorCategoriaYCuentaId(cuenta.getId());
+    }
+
+    // Usado por el Asistente IA. Suma todos los egresos desde el día 1 del mes actual.
+    @Transactional(readOnly = true)
+    public BigDecimal obtenerTotalGastadoEsteMesPorEmail(String email) {
+        return obtenerTotalGastadoEsteMesPorEmail(email, TipoMoneda.ARS);
+    }
+    
+    @Transactional(readOnly = true)
+    public BigDecimal obtenerTotalGastadoEsteMesPorEmail(String email, TipoMoneda moneda) {
+        Usuario usuario = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+
+        Cuenta cuenta = cuentaRepository.findByUsuarioIdAndTipoMoneda(usuario.getId(), moneda)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cuenta no encontrada"));
+
+        LocalDateTime desde = LocalDate.now().withDayOfMonth(1).atStartOfDay();
+        return transaccionRepository.obtenerTotalEgresosDesde(cuenta.getId(), desde);
     }
 }

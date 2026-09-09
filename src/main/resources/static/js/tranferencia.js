@@ -1,7 +1,11 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const formTransferencia = document.getElementById('form-transferencia');
+    const selectCuentaOrigen = document.getElementById('cuenta-origen');
+    const optionUsd = document.getElementById('option-usd');
+    const labelCuentaTipo = document.getElementById('label-cuenta-tipo');
     const inputDestino = document.getElementById('cuenta-destino');
     const inputMonto = document.getElementById('monto');
+    const selectCategoria = document.getElementById('categoria');
     const btnCancelar = document.getElementById('btn-cancelar');
     const btnAll = document.getElementById('btn-all');
     const saldoElement = document.getElementById('saldo-disponible');
@@ -9,12 +13,50 @@ document.addEventListener('DOMContentLoaded', async () => {
     const token = localStorage.getItem('token');
 
     let saldoActual = 0;
+    let monedaActual = 'ARS';
+    let tieneCuentaUsd = false;
+
+    // Si se llega desde un link/QR de cobro (?to=...&amount=...), precargamos el formulario.
+    function precargarDesdeUrl() {
+        const params = new URLSearchParams(window.location.search);
+        const destino = params.get('to');
+        const monto = params.get('amount');
+
+        if (destino && inputDestino) {
+            inputDestino.value = destino;
+        }
+        if (monto && inputMonto) {
+            const montoNumerico = parseFloat(monto);
+            if (!isNaN(montoNumerico) && montoNumerico > 0) {
+                inputMonto.value = montoNumerico.toFixed(2);
+            }
+        }
+    }
+
+    // Verificar cuentas del usuario (para habilitar USD si la tiene)
+    async function verificarCuentas() {
+        if (!token) return;
+        try {
+            const response = await fetch('/api/cuentas', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (response.ok) {
+                const cuentas = await response.json();
+                tieneCuentaUsd = cuentas.some(c => c.tipoMoneda === 'USD');
+                if (tieneCuentaUsd && optionUsd) {
+                    optionUsd.classList.remove('hidden');
+                }
+            }
+        } catch (e) {
+            console.error('Error al verificar cuentas:', e);
+        }
+    }
 
     async function cargarSaldo() {
         if (!saldoElement || !token) return;
 
         try {
-            const response = await fetch('/api/cuentas/balance', {
+            const response = await fetch(`/api/cuentas/balance?moneda=${monedaActual}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -25,18 +67,44 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (response.ok) {
                 const data = await response.json();
                 saldoActual = Number(data.balance ?? data.saldo ?? data.amount ?? data) || 0;
-                saldoElement.textContent = new Intl.NumberFormat('es-AR', {
-                    style: 'currency',
-                    currency: 'ARS',
-                    minimumFractionDigits: 2
+
+                const numeroFormateado = new Intl.NumberFormat('es-AR', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
                 }).format(saldoActual);
+                const simbolo = monedaActual === 'USD' ? 'US$' : '$';
+                const textoFormateado = `${simbolo} ${numeroFormateado}`;
+
+                if (window.AlkyBalanceVisibility) {
+                    window.AlkyBalanceVisibility.render(saldoElement, textoFormateado);
+                } else {
+                    saldoElement.textContent = textoFormateado;
+                }
             }
         } catch (error) {
             console.error('Error al obtener el saldo:', error);
         }
     }
 
+    // Cambio de cuenta origen (ARS / USD)
+    selectCuentaOrigen?.addEventListener('change', async (e) => {
+        monedaActual = e.target.value;
+        if (labelCuentaTipo) {
+            labelCuentaTipo.textContent = monedaActual === 'USD' ? 'Dólares Estadounidenses' : 'Pesos Argentinos';
+        }
+        await cargarSaldo();
+    });
+
+    precargarDesdeUrl();
+    await verificarCuentas();
     await cargarSaldo();
+
+    if (window.AlkyBalanceVisibility) {
+        window.AlkyBalanceVisibility.inicializarBoton(
+            document.getElementById('btn-toggle-saldo'),
+            saldoElement
+        );
+    }
 
     if (btnAll && inputMonto) {
         btnAll.addEventListener('click', () => {
@@ -52,6 +120,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const destinatario = inputDestino ? inputDestino.value.trim() : '';
             const monto = inputMonto ? parseFloat(inputMonto.value) : 0;
+            const categoria = selectCategoria ? selectCategoria.value : 'TRANSFERENCIA';
 
             if (!destinatario || isNaN(monto) || monto <= 0) {
                 mostrarMensaje('Por favor, ingresá un destinatario y un monto válido.', 'error');
@@ -59,13 +128,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             if (monto > saldoActual) {
-                mostrarMensaje('No tenés saldo suficiente para realizar esta transferencia.', 'error');
+                mostrarMensaje(`No tenés saldo suficiente en tu cuenta de ${monedaActual} para realizar esta transferencia.`, 'error');
                 return;
             }
 
             const transferenciaRequestDTO = {
                 destinatario: destinatario,
-                monto: monto
+                monto: monto,
+                categoria: categoria,
+                moneda: monedaActual
             };
 
             try {
@@ -79,8 +150,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
 
                 if (response.ok) {
-                    mostrarMensaje('¡Transferencia realizada con éxito!', 'exito');
+                    const simboloNotif = monedaActual === 'USD' ? 'US$' : '$';
+                    mostrarMensaje(`¡Transferencia de ${simboloNotif} ${monto.toFixed(2)} realizada con éxito!`, 'exito');
                     formTransferencia.reset();
+                    selectCuentaOrigen.value = monedaActual;
                     await cargarSaldo();
                 } else if (response.status === 400 || response.status === 404) {
                     const data = await response.json().catch(() => null);
@@ -104,6 +177,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (btnCancelar) {
         btnCancelar.addEventListener('click', () => {
             if (formTransferencia) formTransferencia.reset();
+            selectCuentaOrigen.value = monedaActual;
             if (mensajeNotificacion) mensajeNotificacion.classList.add('hidden');
         });
     }
