@@ -1,0 +1,39 @@
+/* src/main/resources/static/css/dashboard.module.css */
+
+/* Tarjeta de balance aislada */
+.balanceCard {
+  background-color: #161221;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(224, 37, 206, 0.3);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+  position: relative;
+  overflow: hidden;
+}
+
+.balanceLabel {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.balanceValue {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.balanceBadge {
+  display: inline-block;
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+  color: #00F2FE;
+  font-weight: 500;
+  background-color: rgba(0, 242, 254, 0.1);
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+}

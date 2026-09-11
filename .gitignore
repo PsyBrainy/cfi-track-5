@@ -60,3 +60,12 @@ Thumbs.db
 *.pem
 *.key
 credentials.json
+graphify-out/
+
+# Node & Cypress
+node_modules/
+cypress/videos/
+cypress/screenshots/
+
+.agents/
+patch_*
